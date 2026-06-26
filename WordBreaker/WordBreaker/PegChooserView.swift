@@ -14,18 +14,33 @@ struct PegChooserView: View {
     let onChoose: ((Peg) -> Void)?
     //MARK: - Body
     var body: some View {
-            HStack {
-                ForEach(choices, id: \.self) { peg in
-                    Button {
-                        onChoose?(peg)
-                    } label: {
-                        CharView(peg:peg)
+        let choicesRows:[[Peg]] = choices.chunked(into: 9)
+        VStack {
+            ForEach(choicesRows, id: \.self) { row in
+                HStack {
+                    ForEach(row, id: \.self) { peg in
+                        Button {
+                            onChoose?(peg)
+                        } label: {
+                            CharView(peg:peg)
+                        }
                     }
                 }
             }
+        }
+    }
+}
+
+
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        stride(from: 0, to: count, by: size).map {
+            Array(self[$0..<Swift.min($0 + size, count)])
+        }
     }
 }
 
 #Preview {
-    PegChooserView(choices:["a","b","d"], onChoose: nil)
+    let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0).lowercased() }
+    PegChooserView(choices:pegChoices, onChoose: nil)
 }
