@@ -30,11 +30,14 @@ struct CharSeqView: View {
                 .onTapGesture {
                     if charSeq.kind == .guess {
                         selection = index
-                        print(index)
+                    }
+                }
+                .overlay {
+                    if let matches = charSeq.matches {
+                        Selection.shape.foregroundStyle(matchOverlayColor(for:matches[index])).opacity(0.5)
                     }
                 }
         }
-        
     }
     
     struct Selection {
@@ -42,6 +45,14 @@ struct CharSeqView: View {
         static let cornerRadius : CGFloat = 10
         static let color: Color = Color.gray(0.9)
         static let shape = RoundedRectangle(cornerRadius:cornerRadius)
+    }
+    
+    func matchOverlayColor(for match:Match) -> Color {
+        switch match {
+            case .exact   : .green
+            case .inexact : .blue
+            case .nomatch : .gray
+        }
     }
     
 }
