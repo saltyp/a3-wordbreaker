@@ -65,7 +65,7 @@ struct CharSeq {
         }
     }
     
-    /// Calculates what type of match for each peg : eg returns [.inexact, .exact, .nomatch, .exact]
+    /// Calculates what type of match for each peg : eg returns [Match.inexact, .exact, .nomatch, .exact]
     func match(against otherCode: CharSeq) -> [Match] {
         var pegsToMatch = otherCode.pegs  //mutable
         // calculate exact matches: eg results -> [.nomatch, .exact, .nomatch, .exact]

@@ -18,25 +18,18 @@ enum Match {
 struct WordBreaker {
     //MARK: Data In
     let masterWord: String
-    let masterWordChars: [String]  //TODO: remove?
-    let wordLength: Int
-    var masterCharSeq: CharSeq = CharSeq(kind: .mastercode(isHidden: true))
+    var masterCharSeq: CharSeq = CharSeq(kind: .mastercode(isHidden: false))
     var guess : CharSeq = CharSeq(kind: .guess)  // current guess in progress
     var attempts : [CharSeq] = [CharSeq]()  // all attempts made
     let pegChoices : [Peg] // choices available to make a guess
 
     init(masterWord: String) {
         self.masterWord = masterWord
-        self.wordLength = masterWord.count
         self.pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0).lowercased() }
-        let masterWordChars = masterWord.map {String($0)} //TODO: remove?
-        self.masterWordChars = masterWordChars //TODO: remove?
-        self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: true), pegs: masterWordChars)
-        print(masterCharSeq)
+        self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: false), pegs: masterWord.map {String($0)})
         self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
     }
-    
-    
+        
     //MARK: - body
     var isOver: Bool {
         attempts.last?.pegs == masterCharSeq.pegs
@@ -44,7 +37,7 @@ struct WordBreaker {
     
     mutating func attemptGuess() {
         var attempt = guess  // change kind of Code to an attempt, from a guess
-        attempt.kind = .attempt(guess.match(against: masterCharSeq))  // set kind to an attempt with the associated data of matches
+        attempt.kind = .attempt(guess.match(against: masterCharSeq))  // set kind to an attempt with the associated data of (calculated) matches
         attempts.append(attempt) // now attempt can be added to attempts
         guess.reset()
         if isOver {

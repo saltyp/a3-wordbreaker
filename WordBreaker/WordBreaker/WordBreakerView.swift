@@ -23,6 +23,7 @@ struct WordBreakerView: View {
                 if !game.isOver {
                     view(for:game.guess)
                 }
+                Divider()
                 ForEach(game.attempts.indices.reversed(), id:\.self) {
                     ix in view(for:game.attempts[ix])
                 }
