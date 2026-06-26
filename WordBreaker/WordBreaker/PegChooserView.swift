@@ -15,7 +15,7 @@ struct PegChooserView: View {
     //MARK: - Body
     var body: some View {
         //TODO: make number of keys in a row dependent on geometry(eg landscape vs portrait)
-        let choicesRows:[[Peg]] = choices.chunked(into: ChoiceLayout.maxNumChoicesPerRow)
+        let choicesRows:[[Peg]] = chunk(choices, by: ChoiceLayout.choicesPerRow)
         let rowsCount: CGFloat = CGFloat(choicesRows.count)
             VStack {
                 ForEach(choicesRows, id: \.self) { row in
@@ -37,21 +37,26 @@ struct PegChooserView: View {
 }
 
 struct ChoiceLayout {
-    static let maxNumChoicesPerRow = 9
-    static let spacing: CGFloat = 4
-    static let buttonWidth : CGFloat = 35
+    static let choicesPerRow: [Int] = [10,9,7]
+    static let spacing: CGFloat = 5
+    static let buttonWidth : CGFloat = 32
 
     
 }
 
-
-
-extension Array {
-    func chunked(into size: Int) -> [[Element]] {
-        stride(from: 0, to: count, by: size).map {
-            Array(self[$0..<Swift.min($0 + size, count)])
-        }
+func chunk(_ fullArray: [Peg], by chunkSizes: [Int]) -> [[Peg]] {
+    var arrayArray : [[Peg]] = []
+    guard chunkSizes.reduce(0, {$0 + $1}) == fullArray.count else {
+        arrayArray.append(fullArray)
+        return arrayArray
     }
+    var startIndex:Int = 0
+    for chunkSize in chunkSizes {
+        let endIndex = startIndex + chunkSize
+        arrayArray.append(Array(fullArray[startIndex..<endIndex]))
+        startIndex = endIndex
+    }
+    return arrayArray
 }
 
 #Preview {
