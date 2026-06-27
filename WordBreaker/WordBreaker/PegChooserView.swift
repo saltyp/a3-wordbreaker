@@ -60,6 +60,6 @@ func chunk(_ fullArray: [Peg], by chunkSizes: [Int]) -> [[Peg]] {
 }
 
 #Preview {
-    let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0).lowercased() }
+    let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }
     PegChooserView(choices:pegChoices, onChoose: nil)
 }

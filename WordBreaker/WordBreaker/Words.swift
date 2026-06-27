@@ -52,6 +52,10 @@ class Words {
         }
         return word
     }
+    
+    func wordSet(length: Int) -> Set<String> {
+        return words[length] ?? []
+    }
 }
 
 //extension UITextChecker {

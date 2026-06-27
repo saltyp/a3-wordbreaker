@@ -8,17 +8,27 @@
 import SwiftUI
 
 struct WordBreakerView: View {
-    
+    @Environment(\.words) var words
+        
     // MARK: Data Owned By Me
-    @State private var game  = WordBreaker(masterWord: "apple", validWords:["apple","house","foody"])
+    @State private var game  = WordBreaker(masterWord: "apple", validWords: ["APPLE","HOUSE","FOODY"])
     @State private var selection : Int = 0
 
     // MARK: - body
     
-    
     var body: some View {
         VStack{
             view(for:game.masterCharSeq)
+                .onChange(of: words.count, initial: true) {
+                    if game.attempts.count == 0 { // don’t disrupt a game in progress
+                        if words.count == 0 { // no words (yet)
+                            game.masterCharSeq.word = "AWAIT"
+                        } else {
+                            game.masterCharSeq.word = words.random(length: 5) ?? "ERROR"
+                            game.validWords = words.wordSet(length: 5)
+                        }
+                    }
+                }
             ScrollView {
                 if !game.isOver {
                     view(for:game.guess)

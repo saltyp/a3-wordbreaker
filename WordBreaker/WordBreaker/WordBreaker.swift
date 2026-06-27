@@ -18,8 +18,8 @@ enum Match {
 struct WordBreaker {
     
     //MARK: Data In
-    let masterWord: String
-    let validWords: [String]
+    let masterWord: String //actually mutable since masterCharSeq is mutable!
+    var validWords: Set<String>
     
     //MARK: - body
     static private let isMasterHidden = false
@@ -28,10 +28,10 @@ struct WordBreaker {
     var attempts : [CharSeq] = [CharSeq]()  // all attempts made
     let pegChoices : [Peg] // choices available to make a guess
 
-    init(masterWord: String, validWords: [String] = []) {
+    init(masterWord: String, validWords: Set<String> = []) {
         self.masterWord = masterWord
         self.validWords = validWords
-        self.pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0).lowercased() }
+        self.pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }
         self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: WordBreaker.isMasterHidden), pegs: masterWord.map {String($0)})
         self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
     }
