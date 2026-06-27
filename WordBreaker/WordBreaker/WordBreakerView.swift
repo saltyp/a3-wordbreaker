@@ -9,15 +9,15 @@ import SwiftUI
 
 struct WordBreakerView: View {
     @Environment(\.words) var words
-        
+    private static let minWordLength = 3
+    private static let maxWordLength = 6
+    
     // MARK: Data Owned By Me
-    @State private var game  = WordBreaker(masterWord: "AWAID")
+    @State private var game  = WordBreaker(masterWord: "Apple")
     @State private var selection : Int = 0
     @State private var checker = UITextChecker()
 
     // MARK: - body
-    private static let minWordLength = 3
-    private static let maxWordLength = 6
     
     var body: some View {
         VStack{
@@ -27,7 +27,9 @@ struct WordBreakerView: View {
                         if words.count == 0 { // no words (yet)
                             game.masterCharSeq.word = "AWAIT"
                         } else {
-                            game.masterCharSeq.word = words.random(length: Int.random(in:WordBreakerView.minWordLength...WordBreakerView.maxWordLength)) ?? "ERROR"
+                            let wordLength:Int = Int.random(in:WordBreakerView.minWordLength...WordBreakerView.maxWordLength)
+                            // reset game, not just masterword so that guess sequence is consistent (ie same #)
+                            game = WordBreaker(masterWord: words.random(length: wordLength) ?? "ERROR")
                         }
                     }
                 }
@@ -54,7 +56,7 @@ struct WordBreakerView: View {
             withAnimation {
                 // let game decide game logic of whether to allow guessing invalid word :
                 game.guessIsValidWord = checker.isAWord(game.guess.word.lowercased())
-                print("\(game.guess.word.lowercased()): \(game.guessIsValidWord)")
+//                print("\(game.guess.word.lowercased()): \(game.guessIsValidWord)")
                 game.attemptGuess()
                 selection = 0
             }
