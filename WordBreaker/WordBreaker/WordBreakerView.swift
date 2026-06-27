@@ -13,6 +13,7 @@ struct WordBreakerView: View {
     // MARK: Data Owned By Me
     @State private var game  = WordBreaker(masterWord: "apple")
     @State private var selection : Int = 0
+    @State private var checker = UITextChecker()
 
     // MARK: - body
     
@@ -37,6 +38,7 @@ struct WordBreakerView: View {
                     ix in view(for:game.attempts[ix])
                 }
             }
+            newGameButton
             PegChooserView(choices:game.pegChoices) {peg in
                 game.setGuessPeg(peg, at: selection)
                 selection = (selection + 1) % game.guess.pegs.count
@@ -45,19 +47,36 @@ struct WordBreakerView: View {
         .padding()
     }
         
-    
     var guessButton: some View {
         Button("Guess") {
             withAnimation {
                 // let game decide game logic of whether to allow guessing invalid word :
-                game.guessIsValidWord = words.contains(game.guess.word)
+                game.guessIsValidWord = checker.isAWord(game.guess.word.lowercased())
+                print("\(game.guess.word.lowercased()): \(game.guessIsValidWord)")
                 game.attemptGuess()
                 selection = 0
             }
         }
+        .padding(5)
+        .background(Color(red: 0, green: 0, blue: 0.5))
+        .foregroundStyle(.white)
+        .clipShape(Capsule())
         .font(.system(size: GuessButton.maxFontSize))
-            .minimumScaleFactor(GuessButton.scaleFactor)
+        .minimumScaleFactor(GuessButton.scaleFactor)
     }
+    
+    var newGameButton: some View {
+        Button("New Game") {
+            game = WordBreaker(masterWord: words.random(length: 5) ?? "ERROR")
+        }
+        .padding()
+        .background(Color(red: 0, green: 0, blue: 0.5))
+        .foregroundStyle(.white)
+        .clipShape(Capsule())
+        .font(.system(size: NewGameButton.maxFontSize))
+        .minimumScaleFactor(NewGameButton.scaleFactor)
+    }
+
     
     func view(for code:CharSeq) -> some View {
         HStack {
@@ -72,10 +91,16 @@ struct WordBreakerView: View {
         }
     
     struct GuessButton {
-        static let minFontSize : CGFloat = 5
-        static let maxFontSize : CGFloat = 50
+        static let minFontSize : CGFloat = 10
+        static let maxFontSize : CGFloat = 200
         static let scaleFactor = minFontSize/maxFontSize
-        
+    }
+    
+    struct NewGameButton {
+        static let minFontSize : CGFloat = 3
+        static let maxFontSize : CGFloat = 30
+        static let scaleFactor = minFontSize/maxFontSize
+
     }
 }
 
