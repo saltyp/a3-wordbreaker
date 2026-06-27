@@ -11,11 +11,13 @@ struct WordBreakerView: View {
     @Environment(\.words) var words
         
     // MARK: Data Owned By Me
-    @State private var game  = WordBreaker(masterWord: "apple")
+    @State private var game  = WordBreaker(masterWord: "AWAID")
     @State private var selection : Int = 0
     @State private var checker = UITextChecker()
 
     // MARK: - body
+    private static let minWordLength = 3
+    private static let maxWordLength = 6
     
     var body: some View {
         VStack{
@@ -25,7 +27,7 @@ struct WordBreakerView: View {
                         if words.count == 0 { // no words (yet)
                             game.masterCharSeq.word = "AWAIT"
                         } else {
-                            game.masterCharSeq.word = words.random(length: 5) ?? "ERROR"
+                            game.masterCharSeq.word = words.random(length: Int.random(in:WordBreakerView.minWordLength...WordBreakerView.maxWordLength)) ?? "ERROR"
                         }
                     }
                 }
@@ -67,7 +69,7 @@ struct WordBreakerView: View {
     
     var newGameButton: some View {
         Button("New Game") {
-            game = WordBreaker(masterWord: words.random(length: 5) ?? "ERROR")
+            game = WordBreaker(masterWord: words.random(length: Int.random(in:WordBreakerView.minWordLength...WordBreakerView.maxWordLength)) ?? "ERROR")
         }
         .padding()
         .background(Color(red: 0, green: 0, blue: 0.5))
