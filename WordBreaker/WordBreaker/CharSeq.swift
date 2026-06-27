@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CharSeq {
+struct CharSeq : Equatable{
     //MARK: Data In
     var kind : Kind
     var pegs : [Peg]

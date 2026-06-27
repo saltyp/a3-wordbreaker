@@ -16,17 +16,23 @@ enum Match {
 }
 
 struct WordBreaker {
+    
     //MARK: Data In
     let masterWord: String
-    var masterCharSeq: CharSeq = CharSeq(kind: .mastercode(isHidden: false))
+    let validWords: [String]
+    
+    //MARK: - body
+    static private let isMasterHidden = false
+    var masterCharSeq: CharSeq = CharSeq(kind: .mastercode(isHidden: isMasterHidden))
     var guess : CharSeq = CharSeq(kind: .guess)  // current guess in progress
     var attempts : [CharSeq] = [CharSeq]()  // all attempts made
     let pegChoices : [Peg] // choices available to make a guess
 
-    init(masterWord: String) {
+    init(masterWord: String, validWords: [String] = []) {
         self.masterWord = masterWord
+        self.validWords = validWords
         self.pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0).lowercased() }
-        self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: false), pegs: masterWord.map {String($0)})
+        self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: WordBreaker.isMasterHidden), pegs: masterWord.map {String($0)})
         self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
     }
         
@@ -36,6 +42,14 @@ struct WordBreaker {
     }
     
     mutating func attemptGuess() {
+        // Ignore attempts by the user that they’ve already tried before
+        //TODO: not working
+        if attempts.firstIndex(where: { $0 == guess }) != nil { return }
+        // Ignore attempts for which have no pegs chosen at all:
+        if guess.pegs.allSatisfy({$0 == CharSeq.missing}) { return }
+        //TODO: ignore attempts where the charseq is not a valid word
+        if validWords.firstIndex(of: guess.word) == nil { return }
+        
         var attempt = guess  // change kind of Code to an attempt, from a guess
         attempt.kind = .attempt(guess.match(against: masterCharSeq))  // set kind to an attempt with the associated data of (calculated) matches
         attempts.append(attempt) // now attempt can be added to attempts

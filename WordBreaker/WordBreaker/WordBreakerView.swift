@@ -10,10 +10,10 @@ import SwiftUI
 struct WordBreakerView: View {
     
     // MARK: Data Owned By Me
-    @State private var game  = WordBreaker(masterWord: "apple")
+    @State private var game  = WordBreaker(masterWord: "apple", validWords:["apple","house","foody"])
     @State private var selection : Int = 0
 
-    // - MARK: body
+    // MARK: - body
     
     
     var body: some View {
@@ -53,12 +53,8 @@ struct WordBreakerView: View {
             CharSeqView(charSeq:code, selection: $selection)
             Rectangle().foregroundStyle(Color.clear).aspectRatio(1, contentMode: .fit)
                 .overlay {
-//                    if let matches = code.matches {
-//                        MatchMarkers(matches: matches)
-//                    } else {
                         if code.kind == .guess {
                             guessButton
-//                        }
                     }
                 }
             }
