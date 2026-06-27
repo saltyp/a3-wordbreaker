@@ -52,20 +52,16 @@ class Words {
         }
         return word
     }
-    
-    func wordSet(length: Int) -> Set<String> {
-        return words[length] ?? []
-    }
 }
 
-//extension UITextChecker {
-//    func isAWord(_ word: String) -> Bool {
-//        rangeOfMisspelledWord(
-//            in: word,
-//            range: NSRange(location: 0, length: word.utf16.count),
-//            startingAt: 0,
-//            wrap: false,
-//            language: "en_US"
-//        ).location == NSNotFound
-//    }
-//}
+extension UITextChecker {
+    func isAWord(_ word: String) -> Bool {
+        rangeOfMisspelledWord(
+            in: word,
+            range: NSRange(location: 0, length: word.utf16.count),
+            startingAt: 0,
+            wrap: false,
+            language: "en_US"
+        ).location == NSNotFound
+    }
+}

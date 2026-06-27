@@ -19,10 +19,10 @@ struct WordBreaker {
     
     //MARK: Data In
     let masterWord: String //actually mutable since masterCharSeq is mutable!
-    var validWords: Set<String>
     
     //MARK: - body
     static private let isMasterHidden = false
+    var guessIsValidWord: Bool = false
     var masterCharSeq: CharSeq = CharSeq(kind: .mastercode(isHidden: isMasterHidden))
     var guess : CharSeq = CharSeq(kind: .guess)  // current guess in progress
     var attempts : [CharSeq] = [CharSeq]()  // all attempts made
@@ -30,7 +30,6 @@ struct WordBreaker {
 
     init(masterWord: String, validWords: Set<String> = []) {
         self.masterWord = masterWord
-        self.validWords = validWords
         self.pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }
         self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: WordBreaker.isMasterHidden), pegs: masterWord.map {String($0)})
         self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
@@ -48,7 +47,7 @@ struct WordBreaker {
         // Ignore attempts for which have no pegs chosen at all:
         if guess.pegs.allSatisfy({$0 == CharSeq.missing}) { return }
         //TODO: ignore attempts where the charseq is not a valid word
-        if validWords.firstIndex(of: guess.word) == nil { return }
+        if !guessIsValidWord { return }
         
         var attempt = guess  // change kind of Code to an attempt, from a guess
         attempt.kind = .attempt(guess.match(against: masterCharSeq))  // set kind to an attempt with the associated data of (calculated) matches

@@ -11,7 +11,7 @@ struct WordBreakerView: View {
     @Environment(\.words) var words
         
     // MARK: Data Owned By Me
-    @State private var game  = WordBreaker(masterWord: "apple", validWords: ["APPLE","HOUSE","FOODY"])
+    @State private var game  = WordBreaker(masterWord: "apple")
     @State private var selection : Int = 0
 
     // MARK: - body
@@ -25,7 +25,6 @@ struct WordBreakerView: View {
                             game.masterCharSeq.word = "AWAIT"
                         } else {
                             game.masterCharSeq.word = words.random(length: 5) ?? "ERROR"
-                            game.validWords = words.wordSet(length: 5)
                         }
                     }
                 }
@@ -50,6 +49,8 @@ struct WordBreakerView: View {
     var guessButton: some View {
         Button("Guess") {
             withAnimation {
+                // let game decide game logic of whether to allow guessing invalid word :
+                game.guessIsValidWord = words.contains(game.guess.word)
                 game.attemptGuess()
                 selection = 0
             }
