@@ -10,6 +10,7 @@ import SwiftUI
 struct PegChooserView: View {
     //MARK: Data In
     let choices:[Peg]
+    let bestSoFars: [Peg:ChoiceBestSoFar]
     //MARK: Data Out Function
     let onChoose: ((Peg) -> Void)?
     //MARK: - Body
@@ -28,12 +29,23 @@ struct PegChooserView: View {
                                 CharView(peg:peg)
                             }
                             .frame(width: ChoiceLayout.buttonWidth, height: ChoiceLayout.buttonWidth)
+                            .foregroundStyle(matchOverlayColor(for: bestSoFars[peg] ?? .notUsedYet))
                         }
                     }
                 }
             }
             .frame(height: rowsCount * ChoiceLayout.buttonWidth + (rowsCount - 1) * ChoiceLayout.spacing)
     }
+    
+    func matchOverlayColor(for bestSoFar:ChoiceBestSoFar) -> Color {
+        switch bestSoFar {
+            case .exact   : .green
+            case .inexact : .blue
+            case .nomatch : .red
+            case .notUsedYet : .gray
+        }
+    }
+
 }
 
 struct ChoiceLayout {
@@ -61,5 +73,5 @@ func chunk(_ fullArray: [Peg], by chunkSizes: [Int]) -> [[Peg]] {
 
 #Preview {
     let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }
-    PegChooserView(choices:pegChoices, onChoose: nil)
+    PegChooserView(choices:pegChoices,bestSoFars: ["A":.notUsedYet,"B":.exact,"C":.nomatch,"D":.inexact], onChoose: nil)
 }

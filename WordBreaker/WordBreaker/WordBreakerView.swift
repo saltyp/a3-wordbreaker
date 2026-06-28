@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct WordBreakerView: View {
+    //TODO: why does this keep refreshing the call to https: ? Is it just a function of Canvas view?
     @Environment(\.words) var words
     private static let minWordLength = 3
     private static let maxWordLength = 6
@@ -43,7 +44,7 @@ struct WordBreakerView: View {
                 }
             }
             newGameButton
-            PegChooserView(choices:game.pegChoices) {peg in
+            PegChooserView(choices:game.pegChoices, bestSoFars: game.pegChoiceRecord) {peg in
                 game.setGuessPeg(peg, at: selection)
                 selection = (selection + 1) % game.guess.pegs.count
             }

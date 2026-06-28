@@ -60,8 +60,8 @@ struct CharSeq : Equatable{
     
     var matches : [Match]? {
         switch kind {
-        case .attempt(let matches) : return matches
-        default: return nil
+            case .attempt(let matches) : return matches
+            default: return nil
         }
     }
     

@@ -9,10 +9,23 @@ import Foundation
 
 typealias Peg = String // no need for enum Peg with just one var
 
-enum Match {
-    case exact
+enum Match: Int {
+    case nomatch = 0
     case inexact
+    case exact
+}
+
+enum ChoiceBestSoFar: Int {
+    case notUsedYet = -1
     case nomatch
+    case inexact
+    case exact
+
+    /// updates the state to best so far state
+    mutating func update(_ other: Match) -> Void {
+        let newValue = max(rawValue, other.rawValue)
+        self = ChoiceBestSoFar(rawValue:newValue)!
+    }
 }
 
 struct WordBreaker {
@@ -27,12 +40,15 @@ struct WordBreaker {
     var guess : CharSeq = CharSeq(kind: .guess)  // current guess in progress
     var attempts : [CharSeq] = [CharSeq]()  // all attempts made
     let pegChoices : [Peg] // choices available to make a guess
-
+    var pegChoiceRecord : [Peg:ChoiceBestSoFar]
+    
     init(masterWord: String, validWords: Set<String> = []) {
         self.masterWord = masterWord
-        self.pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }
+        let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }
+        self.pegChoices = pegChoices
         self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: WordBreaker.isMasterHidden), pegs: masterWord.map {String($0)})
         self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
+        self.pegChoiceRecord = Dictionary( uniqueKeysWithValues: pegChoices.map { ($0, .notUsedYet) })
     }
         
     //MARK: - body
@@ -44,14 +60,20 @@ struct WordBreaker {
         // Ignore attempts by the user that they’ve already tried before
         //TODO: not working
         if attempts.firstIndex(where: { $0 == guess }) != nil { return }
-        // Ignore attempts for which have no pegs chosen at all:
+        // ignore attempts for which have no pegs chosen at all:
         if guess.pegs.allSatisfy({$0 == CharSeq.missing}) { return }
-        //TODO: ignore attempts where the charseq is not a valid word
+        // ignore attempts where the charseq is not a valid word
         if !guessIsValidWord { return }
         
         var attempt = guess  // change kind of Code to an attempt, from a guess
-        attempt.kind = .attempt(guess.match(against: masterCharSeq))  // set kind to an attempt with the associated data of (calculated) matches
-        attempts.append(attempt) // now attempt can be added to attempts
+        let matches = guess.match(against: masterCharSeq)
+        attempt.kind = .attempt(matches)  // set kind to an attempt with the associated data of (calculated) matches
+        // TODO: better to use this with enum kind
+        for index in 0..<attempt.pegs.count {
+            pegChoiceRecord[attempt.pegs[index]]?.update(matches[index])
+        }
+        // now attempt can be added to attempts
+        attempts.append(attempt)
         guess.reset()
         if isOver {
             masterCharSeq.kind = .mastercode(isHidden: false)
