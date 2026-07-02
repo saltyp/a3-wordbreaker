@@ -58,6 +58,11 @@ struct WordBreakerView: View {
                             game.attemptGuess()
                             selection = 0
                         }
+                    },
+                    onErase: {
+                        selection = max(0,selection - 1)
+                        //TODO: reduce coupling here:
+                        game.setGuessPeg(CharSeq.missing, at: selection)
                     }
                 )
             }
@@ -81,12 +86,6 @@ struct WordBreakerView: View {
     func view(for code:CharSeq) -> some View {
         HStack {
             CharSeqView(charSeq:code, selection: $selection)
-            Rectangle().foregroundStyle(Color.clear).aspectRatio(1, contentMode: .fit)
-                .overlay {
-                        if code.kind == .guess {
-                            // guessButton
-                    }
-                }
             }
         }
     

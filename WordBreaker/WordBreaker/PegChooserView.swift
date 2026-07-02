@@ -14,6 +14,7 @@ struct PegChooserView: View {
     //MARK: Data Out Function
     let onChoose: ((Peg) -> Void)?
     let onGuess: (() -> Void)?
+    let onErase: (() -> Void)?
     //MARK: - Body
     
     var body: some View {
@@ -66,7 +67,7 @@ struct PegChooserView: View {
     }
     
     var eraseButton: some View {
-        Button("⌫") {}
+        Button("⌫") {onErase?()}
             .foregroundStyle(.black)
             .frame(width: 1.3*ChoiceLayout.buttonWidth, height: ChoiceLayout.buttonWidth)
             .overlay(
@@ -99,5 +100,5 @@ func chunk(_ fullArray: [Peg], by chunkSizes: [Int]) -> [[Peg]] {
 
 #Preview {
     let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }
-    PegChooserView(choices:pegChoices,bestSoFars: ["A":.notUsedYet,"B":.exact,"C":.nomatch,"D":.inexact], onChoose: nil, onGuess:nil)
+    PegChooserView(choices:pegChoices,bestSoFars: ["A":.notUsedYet,"B":.exact,"C":.nomatch,"D":.inexact], onChoose: nil, onGuess:nil, onErase: nil)
 }
