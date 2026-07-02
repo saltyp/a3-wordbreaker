@@ -14,27 +14,36 @@ struct PegChooserView: View {
     //MARK: Data Out Function
     let onChoose: ((Peg) -> Void)?
     //MARK: - Body
+    
     var body: some View {
         //TODO: make number of keys in a row dependent on geometry(eg landscape vs portrait)
         let choicesRows:[[Peg]] = chunk(choices, by: ChoiceLayout.choicesPerRow)
-        let rowsCount: CGFloat = CGFloat(choicesRows.count)
-            VStack {
-                ForEach(choicesRows, id: \.self) { row in
-                    HStack {
-                        ForEach(row, id: \.self) { peg in
-                            //TODO: keep sizing the same
-                            Button {
-                                onChoose?(peg)
-                            } label: {
-                                CharView(peg:peg)
-                            }
-                            .frame(width: ChoiceLayout.buttonWidth, height: ChoiceLayout.buttonWidth)
-                            .foregroundStyle(matchOverlayColor(for: bestSoFars[peg] ?? .notUsedYet))
+        
+        VStack {
+            ForEach(choicesRows, id: \.self) { row in
+                HStack {
+                    let isLastRow = (row.count == ChoiceLayout.choicesPerRow.last!)
+                    if isLastRow {
+                        Circle().foregroundStyle(Color.black)
+                    }
+                    ForEach(row, id: \.self) { peg in
+                        //TODO: keep sizing the same
+                        Button {
+                            onChoose?(peg)
+                        } label: {
+                            CharView(peg:peg)
                         }
+                        .frame(width: ChoiceLayout.buttonWidth, height: ChoiceLayout.buttonWidth)
+                        .foregroundStyle(matchOverlayColor(for: bestSoFars[peg] ?? .notUsedYet))
+                    }
+                    if isLastRow {
+                        Circle().fill(Color.black)
                     }
                 }
+                .frame(width:CGFloat(row.count+1)*(ChoiceLayout.buttonWidth+ChoiceLayout.spacing))
             }
-            .frame(height: rowsCount * ChoiceLayout.buttonWidth + (rowsCount - 1) * ChoiceLayout.spacing)
+            .background(Color.red.opacity(0.5))
+        }
     }
     
     func matchOverlayColor(for bestSoFar:ChoiceBestSoFar) -> Color {
@@ -42,18 +51,15 @@ struct PegChooserView: View {
             case .exact   : .green
             case .inexact : .blue
             case .nomatch : .red
-            case .notUsedYet : .gray
+            case .notUsedYet : .black
         }
     }
-
 }
 
 struct ChoiceLayout {
     static let choicesPerRow: [Int] = [10,9,7]
     static let spacing: CGFloat = 5
     static let buttonWidth : CGFloat = 32
-
-    
 }
 
 func chunk(_ fullArray: [Peg], by chunkSizes: [Int]) -> [[Peg]] {
