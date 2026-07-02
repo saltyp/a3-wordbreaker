@@ -45,34 +45,26 @@ struct WordBreakerView: View {
             }
             newGameButton
             HStack {
-                PegChooserView(choices:game.pegChoices, bestSoFars: game.pegChoiceRecord) {peg in
-                    game.setGuessPeg(peg, at: selection)
-                    selection = (selection + 1) % game.guess.pegs.count
-                
-                }
+                PegChooserView(
+                    choices:game.pegChoices,
+                    bestSoFars: game.pegChoiceRecord,
+                    onChoose: {peg in
+                        game.setGuessPeg(peg, at: selection)
+                        selection = (selection + 1) % game.guess.pegs.count
+                    },
+                    onGuess : {
+                        withAnimation {
+                            game.guessIsValidWord = checker.isAWord(game.guess.word.lowercased())
+                            game.attemptGuess()
+                            selection = 0
+                        }
+                    }
+                )
             }
         }
         .padding()
     }
-        
-    var guessButton: some View {
-        Button("Guess") {
-            withAnimation {
-                // let game decide game logic of whether to allow guessing invalid word :
-                game.guessIsValidWord = checker.isAWord(game.guess.word.lowercased())
-//                print("\(game.guess.word.lowercased()): \(game.guessIsValidWord)")
-                game.attemptGuess()
-                selection = 0
-            }
-        }
-        .padding(5)
-        .background(Color(red: 0, green: 0, blue: 0.5))
-        .foregroundStyle(.white)
-        .clipShape(Capsule())
-        .font(.system(size: GuessButton.maxFontSize))
-        .minimumScaleFactor(GuessButton.scaleFactor)
-    }
-    
+            
     var newGameButton: some View {
         Button("New Game") {
             game = WordBreaker(masterWord: words.random(length: Int.random(in:WordBreakerView.minWordLength...WordBreakerView.maxWordLength)) ?? "ERROR")
@@ -92,7 +84,7 @@ struct WordBreakerView: View {
             Rectangle().foregroundStyle(Color.clear).aspectRatio(1, contentMode: .fit)
                 .overlay {
                         if code.kind == .guess {
-                            guessButton
+                            // guessButton
                     }
                 }
             }
