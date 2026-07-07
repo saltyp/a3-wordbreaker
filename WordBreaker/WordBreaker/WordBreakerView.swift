@@ -69,10 +69,16 @@ struct WordBreakerView: View {
         }
         .padding()
     }
-            
-    var newGameButton: some View {
-        Button("New Game") {
-            game = WordBreaker(masterWord: words.random(length: Int.random(in:WordBreakerView.minWordLength...WordBreakerView.maxWordLength)) ?? "ERROR")
+                
+    var newGameButton : some View {
+        Menu("New Game") {
+            Section("Word Length: ") {
+                ForEach(WordBreakerView.minWordLength...WordBreakerView.maxWordLength, id:\.self) {wordlen in
+                        Button("\(wordlen)") {
+                            game = WordBreaker(masterWord: words.random(length: wordlen) ?? "ERROR")
+                        }
+                    }
+            }
         }
         .padding()
         .background(Color(red: 0, green: 0, blue: 0.5))

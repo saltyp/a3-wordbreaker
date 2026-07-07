@@ -34,7 +34,7 @@ struct WordBreaker {
     let masterWord: String //actually mutable since masterCharSeq is mutable!
     
     //MARK: - body
-    static private let isMasterHidden = false
+    static private let isMasterHidden = true
     var guessIsValidWord: Bool = false
     var masterCharSeq: CharSeq = CharSeq(kind: .mastercode(isHidden: isMasterHidden))
     var guess : CharSeq = CharSeq(kind: .guess)  // current guess in progress
@@ -49,6 +49,7 @@ struct WordBreaker {
         self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: WordBreaker.isMasterHidden), pegs: masterWord.map {String($0)})
         self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
         self.pegChoiceRecord = Dictionary( uniqueKeysWithValues: pegChoices.map { ($0, .notUsedYet) })
+        print(masterWord)
     }
         
     //MARK: - body
