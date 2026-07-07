@@ -80,12 +80,7 @@ struct WordBreakerView: View {
                     }
             }
         }
-        .padding()
-        .background(Color(red: 0, green: 0, blue: 0.5))
-        .foregroundStyle(.white)
-        .clipShape(Capsule())
-        .font(.system(size: NewGameButton.maxFontSize))
-        .minimumScaleFactor(NewGameButton.scaleFactor)
+        .newGameButtonStyling()
     }
 
     
@@ -101,12 +96,6 @@ struct WordBreakerView: View {
         static let scaleFactor = minFontSize/maxFontSize
     }
     
-    struct NewGameButton {
-        static let minFontSize : CGFloat = 3
-        static let maxFontSize : CGFloat = 30
-        static let scaleFactor = minFontSize/maxFontSize
-
-    }
 }
 
 extension Color  {
@@ -114,6 +103,19 @@ extension Color  {
         return Color(hue: 148/360, saturation: 0, brightness: brightness)
     }
 }
+
+extension View {
+    func newGameButtonStyling(minimum: CGFloat = 3, maximum:CGFloat = 30) -> some View {
+        self
+          .font(.system(size: maximum))
+          .minimumScaleFactor(minimum/maximum)
+          .foregroundStyle(.white)
+          .padding()
+          .background(Color(red: 0, green: 0, blue: 0.5))
+          .clipShape(Capsule())
+    }
+}
+
 
 
 #Preview {
