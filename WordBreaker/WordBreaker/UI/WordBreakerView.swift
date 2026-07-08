@@ -44,7 +44,7 @@ struct WordBreakerView: View {
                 }
             }
             newGameButton
-            HStack {
+            if !game.isOver {
                 PegChooserView(
                     choices:game.pegChoices,
                     bestSoFars: game.pegChoiceRecord,
@@ -55,26 +55,30 @@ struct WordBreakerView: View {
                     leftExtraButton: { guessQWERTYButton },
                     rightExtraButton: { eraseButton }
                 )
+                .transition(.keyboard)
             }
+            
         }
         .padding()
     }
                 
     var newGameButton : some View {
-        Menu("New Game") {
-            Section("Word Length: ") {
-                ForEach(WordBreakerView.minWordLength...WordBreakerView.maxWordLength, id:\.self) {wordlen in
-                        Button("\(wordlen)") {
-                            game = WordBreaker(masterWord: words.random(length: wordlen) ?? "ERROR")
+        withAnimation(.restart) {
+            Menu("New Game") {
+                Section("Word Length: ") {
+                    ForEach(WordBreakerView.minWordLength...WordBreakerView.maxWordLength, id:\.self) {wordlen in
+                            Button("\(wordlen)") {
+                                game = WordBreaker(masterWord: words.random(length: wordlen) ?? "ERROR")
+                            }
                         }
-                    }
+                }
             }
+            .newGameButtonStyling()
         }
-        .newGameButtonStyling()
     }
     
     var guessQWERTYButton: some View {
-        Button("Guess") {onGuess()}
+        Button("Guess") {guess()}
             .foregroundStyle(.black)
         .frame(width: 2*ChoiceLayout.buttonWidth, height: ChoiceLayout.buttonWidth)
         .overlay(
@@ -82,8 +86,8 @@ struct WordBreakerView: View {
                       .stroke(.black, lineWidth: 1))
     }
     
-    func onGuess()->Void {
-        withAnimation {
+    func guess()->Void {
+        withAnimation(.guess) {
             game.guessIsValidWord = checker.isAWord(game.guess.word.lowercased())
             game.attemptGuess()
             selection = 0
@@ -91,7 +95,7 @@ struct WordBreakerView: View {
     }
     
     var eraseButton: some View {
-        Button("⌫") {onErase()}
+        Button("⌫") {erase()}
             .foregroundStyle(.black)
             .frame(width: 1.3*ChoiceLayout.buttonWidth, height: ChoiceLayout.buttonWidth)
             .overlay(
@@ -120,26 +124,6 @@ struct WordBreakerView: View {
     }
     
 }
-
-extension Color  {
-    static func gray(_ brightness: CGFloat) -> Color {
-        return Color(hue: 148/360, saturation: 0, brightness: brightness)
-    }
-}
-
-extension View {
-    func newGameButtonStyling(minimum: CGFloat = 3, maximum:CGFloat = 30) -> some View {
-        self
-          .font(.system(size: maximum))
-          .minimumScaleFactor(minimum/maximum)
-          .foregroundStyle(.white)
-          .padding()
-          .background(Color(red: 0, green: 0, blue: 0.5))
-          .clipShape(Capsule())
-    }
-}
-
-
 
 #Preview {
     WordBreakerView()
