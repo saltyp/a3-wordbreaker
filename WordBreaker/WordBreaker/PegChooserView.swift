@@ -11,10 +11,25 @@ struct PegChooserView<LeftExtraButton:View, RightExtraButton:View>: View {
     //MARK: Data In
     let choices:[Peg]
     let bestSoFars: [Peg:ChoiceBestSoFar]
-    let leftExtraButton: LeftExtraButton
-    let rightExtraButton: RightExtraButton
+    @ViewBuilder let leftExtraButton: () -> LeftExtraButton
+    @ViewBuilder let rightExtraButton: () -> RightExtraButton
     //MARK: Data Out Function
     let onChoose: ((Peg) -> Void)?
+    
+    init(choices: [Peg],
+         bestSoFars: [Peg : ChoiceBestSoFar],
+         onChoose: ((Peg) -> Void)? = nil,
+        @ViewBuilder leftExtraButton: @escaping () -> LeftExtraButton = { EmptyView() },
+        @ViewBuilder rightExtraButton: @escaping () -> RightExtraButton = { EmptyView() }
+    ) {
+        self.choices = choices
+        self.bestSoFars = bestSoFars
+        self.onChoose = onChoose
+        self.leftExtraButton = leftExtraButton
+        self.rightExtraButton = rightExtraButton
+    }
+    
+    
     //MARK: - Body
     
     var body: some View {
@@ -26,7 +41,7 @@ struct PegChooserView<LeftExtraButton:View, RightExtraButton:View>: View {
                 HStack {
                     let isLastRow = (row.count == ChoiceLayout.choicesPerRow.last!)
                     if isLastRow {
-                        leftExtraButton
+                        leftExtraButton()
                     }
                     ForEach(row, id: \.self) { peg in
                         //TODO: keep sizing the same
@@ -39,7 +54,7 @@ struct PegChooserView<LeftExtraButton:View, RightExtraButton:View>: View {
                         .foregroundStyle(matchOverlayColor(for: bestSoFars[peg] ?? .notUsedYet))
                     }
                     if isLastRow {
-                        rightExtraButton
+                        rightExtraButton()
                     }
                 }
                 .frame(width:CGFloat(row.count+1)*(ChoiceLayout.buttonWidth+ChoiceLayout.spacing))
@@ -82,5 +97,7 @@ func chunk(_ fullArray: [Peg], by chunkSizes: [Int]) -> [[Peg]] {
 
 #Preview {
     let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }
-    PegChooserView(choices:pegChoices,bestSoFars: ["A":.notUsedYet,"B":.exact,"C":.nomatch,"D":.inexact], leftExtraButton: EmptyView(), rightExtraButton : EmptyView(), onChoose: nil)
+    PegChooserView(choices:pegChoices,
+                   bestSoFars: ["A":.notUsedYet,"B":.exact,"C":.nomatch,"D":.inexact],
+                   onChoose: nil)
 }

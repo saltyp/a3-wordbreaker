@@ -48,12 +48,12 @@ struct WordBreakerView: View {
                 PegChooserView(
                     choices:game.pegChoices,
                     bestSoFars: game.pegChoiceRecord,
-                    leftExtraButton: guessQWERTYButton,
-                    rightExtraButton: eraseButton,
                     onChoose: {peg in
                         game.setGuessPeg(peg, at: selection)
                         selection = (selection + 1) % game.guess.pegs.count
-                    }
+                    },
+                    leftExtraButton: { guessQWERTYButton },
+                    rightExtraButton: { eraseButton }
                 )
             }
         }
