@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct PegChooserView: View {
+struct PegChooserView<LeftExtraButton:View, RightExtraButton:View>: View {
     //MARK: Data In
     let choices:[Peg]
     let bestSoFars: [Peg:ChoiceBestSoFar]
+    let leftExtraButton: LeftExtraButton
+    let rightExtraButton: RightExtraButton
     //MARK: Data Out Function
     let onChoose: ((Peg) -> Void)?
-    let onGuess: (() -> Void)?
-    let onErase: (() -> Void)?
     //MARK: - Body
     
     var body: some View {
@@ -26,7 +26,7 @@ struct PegChooserView: View {
                 HStack {
                     let isLastRow = (row.count == ChoiceLayout.choicesPerRow.last!)
                     if isLastRow {
-                        guessQWERTYButton
+                        leftExtraButton
                     }
                     ForEach(row, id: \.self) { peg in
                         //TODO: keep sizing the same
@@ -39,7 +39,7 @@ struct PegChooserView: View {
                         .foregroundStyle(matchOverlayColor(for: bestSoFars[peg] ?? .notUsedYet))
                     }
                     if isLastRow {
-                        eraseButton
+                        rightExtraButton
                     }
                 }
                 .frame(width:CGFloat(row.count+1)*(ChoiceLayout.buttonWidth+ChoiceLayout.spacing))
@@ -55,25 +55,7 @@ struct PegChooserView: View {
             case .nomatch : .red
             case .notUsedYet : .black
         }
-    }
-    
-    var guessQWERTYButton: some View {
-        Button("Guess") {onGuess?()}
-            .foregroundStyle(.black)
-        .frame(width: 2*ChoiceLayout.buttonWidth, height: ChoiceLayout.buttonWidth)
-        .overlay(
-                  RoundedRectangle(cornerRadius: 10)
-                      .stroke(.black, lineWidth: 1))
-    }
-    
-    var eraseButton: some View {
-        Button("⌫") {onErase?()}
-            .foregroundStyle(.black)
-            .frame(width: 1.3*ChoiceLayout.buttonWidth, height: ChoiceLayout.buttonWidth)
-            .overlay(
-                      RoundedRectangle(cornerRadius: 10)
-                          .stroke(.black, lineWidth: 1))
-    }
+    }    
 }
 
 struct ChoiceLayout {
@@ -100,5 +82,5 @@ func chunk(_ fullArray: [Peg], by chunkSizes: [Int]) -> [[Peg]] {
 
 #Preview {
     let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }
-    PegChooserView(choices:pegChoices,bestSoFars: ["A":.notUsedYet,"B":.exact,"C":.nomatch,"D":.inexact], onChoose: nil, onGuess:nil, onErase: nil)
+    PegChooserView(choices:pegChoices,bestSoFars: ["A":.notUsedYet,"B":.exact,"C":.nomatch,"D":.inexact], leftExtraButton: EmptyView(), rightExtraButton : EmptyView(), onChoose: nil)
 }

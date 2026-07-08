@@ -48,21 +48,11 @@ struct WordBreakerView: View {
                 PegChooserView(
                     choices:game.pegChoices,
                     bestSoFars: game.pegChoiceRecord,
+                    leftExtraButton: guessQWERTYButton,
+                    rightExtraButton: eraseButton,
                     onChoose: {peg in
                         game.setGuessPeg(peg, at: selection)
                         selection = (selection + 1) % game.guess.pegs.count
-                    },
-                    onGuess : {
-                        withAnimation {
-                            game.guessIsValidWord = checker.isAWord(game.guess.word.lowercased())
-                            game.attemptGuess()
-                            selection = 0
-                        }
-                    },
-                    onErase: {
-                        selection = max(0,selection - 1)
-                        //TODO: reduce coupling here:
-                        game.setGuessPeg(CharSeq.missing, at: selection)
                     }
                 )
             }
@@ -82,6 +72,39 @@ struct WordBreakerView: View {
         }
         .newGameButtonStyling()
     }
+    
+    var guessQWERTYButton: some View {
+        Button("Guess") {onGuess()}
+            .foregroundStyle(.black)
+        .frame(width: 2*ChoiceLayout.buttonWidth, height: ChoiceLayout.buttonWidth)
+        .overlay(
+                  RoundedRectangle(cornerRadius: 10)
+                      .stroke(.black, lineWidth: 1))
+    }
+    
+    func onGuess()->Void {
+        withAnimation {
+            game.guessIsValidWord = checker.isAWord(game.guess.word.lowercased())
+            game.attemptGuess()
+            selection = 0
+        }
+    }
+    
+    var eraseButton: some View {
+        Button("⌫") {onErase()}
+            .foregroundStyle(.black)
+            .frame(width: 1.3*ChoiceLayout.buttonWidth, height: ChoiceLayout.buttonWidth)
+            .overlay(
+                      RoundedRectangle(cornerRadius: 10)
+                          .stroke(.black, lineWidth: 1))
+    }
+    
+    func onErase()->Void {
+        selection = max(0,selection - 1)
+        //TODO: reduce coupling here:
+        game.setGuessPeg(CharSeq.missing, at: selection)
+    }
+
 
     
     func view(for code:CharSeq) -> some View {
