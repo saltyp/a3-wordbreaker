@@ -43,38 +43,37 @@ struct WordBreakerView: View {
                     ix in view(for:game.attempts[ix])
                 }
             }
-            newGameButton
-            if !game.isOver {
-                PegChooserView(
-                    choices:game.pegChoices,
-                    bestSoFars: game.pegChoiceRecord,
-                    onChoose: {peg in
-                        game.setGuessPeg(peg, at: selection)
-                        selection = (selection + 1) % game.guess.pegs.count
-                    },
-                    leftExtraButton: { guessQWERTYButton },
-                    rightExtraButton: { eraseButton }
-                )
-                .transition(.keyboard)
-            }
-            
+                newGameButton
+                if !game.isOver {
+                    PegChooserView(
+                        choices:game.pegChoices,
+                        bestSoFars: game.pegChoiceRecord,
+                        onChoose: {peg in
+                            game.setGuessPeg(peg, at: selection)
+                            selection = (selection + 1) % game.guess.pegs.count
+                        },
+                        leftExtraButton: { guessQWERTYButton },
+                        rightExtraButton: { eraseButton }
+                    )
+                    .transition(.keyboard) // to move keyboard down instead of opacity
+                }
         }
         .padding()
     }
                 
     var newGameButton : some View {
-        withAnimation(.restart) {
-            Menu("New Game") {
-                Section("Word Length: ") {
-                    ForEach(WordBreakerView.minWordLength...WordBreakerView.maxWordLength, id:\.self) {wordlen in
-                            Button("\(wordlen)") {
+        Menu("New Game") {
+            Section("Word Length: ") {
+                ForEach(WordBreakerView.minWordLength...WordBreakerView.maxWordLength, id:\.self) {wordlen in
+                        Button("\(wordlen)") {
+                            withAnimation(.restart) {
                                 game = WordBreaker(masterWord: words.random(length: wordlen) ?? "ERROR")
                             }
                         }
+                    }
                 }
-            }
-            .newGameButtonStyling()
         }
+        .newGameButtonStyling()
     }
     
     var guessQWERTYButton: some View {
@@ -103,19 +102,17 @@ struct WordBreakerView: View {
                           .stroke(.black, lineWidth: 1))
     }
     
-    func onErase()->Void {
+    func erase()->Void {
         selection = max(0,selection - 1)
         //TODO: reduce coupling here:
         game.setGuessPeg(CharSeq.missing, at: selection)
     }
-
-
     
     func view(for code:CharSeq) -> some View {
         HStack {
             CharSeqView(charSeq:code, selection: $selection)
-            }
         }
+    }
     
     struct GuessButton {
         static let minFontSize : CGFloat = 10
