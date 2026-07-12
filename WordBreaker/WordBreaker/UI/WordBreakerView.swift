@@ -104,7 +104,7 @@ struct WordBreakerView: View {
     }
     
     func erase()->Void {
-        selection = max(0,selection - 1)
+        selection = abs((selection + game.guess.seqLength - 1) % game.guess.seqLength)
         //TODO: reduce coupling here:
         game.setGuessPeg(CharSeq.missing, at: selection)
     }
