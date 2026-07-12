@@ -37,6 +37,7 @@ struct WordBreakerView: View {
             ScrollView {
                 if !game.isOver {
                     view(for:game.guess)
+                        .animation(nil, value:game.attempts.count)
                 }
                 Divider()
                 ForEach(game.attempts.indices.reversed(), id:\.self) {
