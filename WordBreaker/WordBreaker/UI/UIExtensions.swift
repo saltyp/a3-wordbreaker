@@ -18,7 +18,7 @@ extension AnyTransition {
     static let keyboard = AnyTransition.offset(x: 0, y:200)
     static func attempt(_ isOver: Bool)-> AnyTransition {
         return AnyTransition.asymmetric(
-            insertion: isOver ? .opacity : .move(edge:.leading),
+            insertion: isOver ? .opacity : .move(edge:.top),
             removal: .move(edge:.trailing))
     }
 }

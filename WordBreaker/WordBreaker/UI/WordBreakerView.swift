@@ -41,7 +41,7 @@ struct WordBreakerView: View {
                 Divider()
                 ForEach(game.attempts.indices.reversed(), id:\.self) {
                     ix in view(for:game.attempts[ix])
-                }
+                }.transition(.attempt(game.isOver)) //transition defined on entire CodeView
             }
                 newGameButton
                 if !game.isOver {
