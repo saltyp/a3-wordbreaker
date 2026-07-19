@@ -14,14 +14,14 @@ struct GamesPlayed: View {
     
     var body: some View {
         // shows a dynamic list of games played (req task #1)
-        List(games, id: \.pegChoices) { game in
+        List(games, id: \.masterWord) { game in
             GameSummary(game:game)
          }
         .listStyle(.plain)
         .onAppear {
             // Toy implementation:
-            games.append(WordBreaker(masterWord: "WIN"))
-            games.append(WordBreaker(masterWord: "LOSE"))
+            games.append(WordBreaker(masterWord: "LOSE", attemptedWords:["FOOD"]))
+            games.append(WordBreaker(masterWord: "WIN", attemptedWords: ["SIT", "OWL"]))
         }
     }
 }

@@ -22,19 +22,9 @@ struct GameSummary: View {
 }
 
 #Preview {
-     GameSummary(game: previewGame())
-}
-
-// helper fxn ffor #Preview, as #Preview doesn't allow imperative for-loop
-func previewGame() -> WordBreaker {
     let masterWord = "WIN"
     let attemptedWords = ["WHY", "SIT","OWL"] //last in array = last attempted
-    var newGame = WordBreaker(masterWord: masterWord)
-    for word in attemptedWords {
-        // produce new attempt that will show matches
-        newGame.guess.word = word
-        newGame.guessIsValidWord = true
-        newGame.attemptGuess()
-    }
-    return newGame
+    var newGame = WordBreaker(masterWord: masterWord, attemptedWords: attemptedWords)
+
+     GameSummary(game: newGame)
 }

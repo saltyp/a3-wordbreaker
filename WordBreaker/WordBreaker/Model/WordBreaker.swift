@@ -52,6 +52,20 @@ struct WordBreaker {
         print(masterWord)
     }
     
+    // initializer for creating a mid-stream game with set attempts
+    init(masterWord:String, attemptedWords:[String]) {
+        self.masterWord = masterWord
+        self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: WordBreaker.isMasterHidden), pegs: masterWord.map {String($0)})
+        self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
+        self.pegChoiceRecord = Dictionary( uniqueKeysWithValues: pegChoices.map { ($0, .notUsedYet) })
+        for word in attemptedWords {
+            // produce new attempt that will show matches
+            self.guess.word = word
+            self.guessIsValidWord = true
+            self.attemptGuess()
+        }
+    }
+    
     
     //MARK: - body
     var isOver: Bool {
