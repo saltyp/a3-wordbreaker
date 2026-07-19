@@ -15,20 +15,21 @@ struct CharSeq : Equatable{
     
     static let missing : Peg = ""
     
+    /// empty initializer
     init(kind: Kind, wordLength: Int = 4) {
         self.kind = kind
         self.seqLength = wordLength
         self.pegs = Array(repeating: CharSeq.missing, count: wordLength)
-        
     }
     
+    /// non-empty initializer
     init(kind: Kind, pegs: [Peg]) {
         self.kind = kind
         self.pegs = pegs
         self.seqLength = pegs.count
     }
-    
-    // get/set the pegs in a Code to a word
+        
+    /// get/set the pegs in a Code to a String
     var word: String {
         get { pegs.joined() }
         set { pegs = newValue.map { String($0) } }
@@ -58,6 +59,7 @@ struct CharSeq : Equatable{
         pegs = Array(repeating: CharSeq.missing, count: seqLength)
     }
     
+    /// returns matches array if this is an attempt
     var matches : [Match]? {
         switch kind {
             case .attempt(let matches) : return matches
