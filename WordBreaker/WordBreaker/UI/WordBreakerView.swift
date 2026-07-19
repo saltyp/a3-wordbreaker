@@ -13,8 +13,10 @@ struct WordBreakerView: View {
     private static let minWordLength = 3
     private static let maxWordLength = 6
     
+    // MARK: Data Shared with Me
+    @Binding var game : WordBreaker
+    
     // MARK: Data Owned By Me
-    @State private var game  = WordBreaker(masterWord: "Apple")
     @State private var selection : Int = 0
     @State private var checker = UITextChecker()
 
@@ -124,5 +126,6 @@ struct WordBreakerView: View {
 }
 
 #Preview {
-    WordBreakerView()
+    @Previewable @State var game = WordBreaker(masterWord: "FOOD", attemptedWords: ["LAST", "FAST"])
+    WordBreakerView(game: $game)
 }
