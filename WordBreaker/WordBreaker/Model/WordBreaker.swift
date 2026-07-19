@@ -28,6 +28,7 @@ enum ChoiceBestSoFar: Int {
     }
 }
 
+
 struct WordBreaker {
     
     //MARK: Data In
@@ -39,23 +40,25 @@ struct WordBreaker {
     var masterCharSeq: CharSeq = CharSeq(kind: .mastercode(isHidden: isMasterHidden))
     var guess : CharSeq = CharSeq(kind: .guess)  // current guess in progress
     var attempts : [CharSeq] = [CharSeq]()  // all attempts made
-    let pegChoices : [Peg] // choices available to make a guess
+    let pegChoices : [Peg] = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }// choices available to make a guess
     var pegChoiceRecord : [Peg:ChoiceBestSoFar]
     
-    init(masterWord: String, validWords: Set<String> = []) {
+    
+    init(masterWord: String) {
         self.masterWord = masterWord
-        let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }
-        self.pegChoices = pegChoices
         self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: WordBreaker.isMasterHidden), pegs: masterWord.map {String($0)})
         self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
         self.pegChoiceRecord = Dictionary( uniqueKeysWithValues: pegChoices.map { ($0, .notUsedYet) })
         print(masterWord)
     }
-        
+    
+    
     //MARK: - body
     var isOver: Bool {
         attempts.last?.pegs == masterCharSeq.pegs
     }
+    
+    var lastAttempt: CharSeq { attempts.last ?? CharSeq(kind:.unknown, pegs: [CharSeq.missing]) }
     
     mutating func attemptGuess() {
         // Ignore attempts by the user that they’ve already tried before
