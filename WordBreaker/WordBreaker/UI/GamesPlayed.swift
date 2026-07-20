@@ -22,10 +22,14 @@ struct GamesPlayed: View {
     var body: some View {
         NavigationSplitView(columnVisibility: .constant(.all)) {
             // lhs summary pane of split view
-            List(games, selection:$selection) { game in
-                NavigationLink(value:game) { //using value:game to only specify here what to show (ie label) with destination view specified below instead, & allow for List to update selection
-                    GameSummary(game:game) // the NavLink label to show
+            List(selection:$selection) {
+                ForEach(games) {game in
+                    NavigationLink(value:game) { //using value:game to only specify here what to show (ie label) with destination view specified below instead, & allow for List to update selection
+                        GameSummary(game:game)
+                    }
                 }
+                .onDelete {offsets in games.remove(atOffsets: offsets)}
+                
             }
             .listStyle(.plain)
             .toolbar {
@@ -33,7 +37,7 @@ struct GamesPlayed: View {
                 EditButton()
             }
             .navigationTitle("Word Breaker")
-        } detail: { //View for the detail pane of the NavSplitView
+        } detail: {
             if let selection {
                 WordBreakerView(game:selection)
                     .navigationTitle("Current game") //selection.name
