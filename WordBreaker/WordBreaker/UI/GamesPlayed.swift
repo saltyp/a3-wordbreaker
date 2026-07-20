@@ -9,6 +9,8 @@ import SwiftUI
 
 struct GamesPlayed: View {
     
+    @Environment(\.words) var words
+    
     // MARK: Data Owned by Me
     @State private var games: [WordBreaker] = []
 //    @State private var selection: WordBreaker? = nil
@@ -25,11 +27,25 @@ struct GamesPlayed: View {
                 }
              }
             .listStyle(.plain)
+            .toolbar {
+                addButton
+            }
         }
         .onAppear {
             // Toy implementation:
             games.append(WordBreaker(masterWord: "LOSE", attemptedWords:["FOOL"]))
             games.append(WordBreaker(masterWord: "WIN", attemptedWords: ["SIT", "OWL"]))
+        }
+    }
+    
+    var addButton: some View {
+        Button("Add Game", systemImage: "plus") {
+            if words.count == 0 { // no words (yet)
+                games.insert(WordBreaker(masterWord: "AWAIT"), at: 0)
+            } else {
+                let wordLength:Int = 5
+                games.insert(WordBreaker(masterWord: words.random(length: wordLength) ?? "ERROR"), at:0)
+            }
         }
     }
 }

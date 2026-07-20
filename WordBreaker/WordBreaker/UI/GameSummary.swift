@@ -17,7 +17,7 @@ struct GameSummary: View {
     var body: some View {
         HStack {
             CharSeqView(charSeq: game.lastAttempt, selection: .constant(0))
-                .frame(maxHeight: 80)
+                .frame(maxHeight: 65)
         }
     }
 }
