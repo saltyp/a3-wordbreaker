@@ -72,7 +72,7 @@ enum ChoiceBestSoFar: Int {
         attempts.last?.pegs == masterCharSeq.pegs
     }
     
-    var lastAttempt: CharSeq { attempts.last ?? CharSeq(kind:.unknown, pegs: [CharSeq.missing]) }
+    var lastAttempt: CharSeq { attempts.last ?? guess }
     
     func attemptGuess() {
         // Ignore attempts by the user that they’ve already tried before
