@@ -21,39 +21,30 @@ struct GamesPlayed: View {
     // MARK: - body
     var body: some View {
         NavigationSplitView(columnVisibility: .constant(.all)) {
-            // shows a dynamic list of games played (req task #1)
+            // lhs summary pane of split view
             List(games, selection:$selection) { game in
-                NavigationLink {
-                    WordBreakerView(game:game)
-                } label: {
-                    GameSummary(game:game)
+                NavigationLink(value:game) { //using value:game to only specify here what to show (ie label) with destination view specified below instead, & allow for List to update selection
+                    GameSummary(game:game) // the NavLink label to show
                 }
             }
-//            {
-//                ForEach(games) { game in
-//                    NavigationLink {
-//                        WordBreakerView(game: game)
-//                    } label: {
-//                        GameSummary(game:game)
-//                    }
-//                }
-//            }
             .listStyle(.plain)
             .toolbar {
                 addButton
                 EditButton()
             }
             .navigationTitle("Word Breaker")
-        } detail: { //rhs
+        } detail: { //View for the detail pane of the NavSplitView
             if let selection {
                 WordBreakerView(game:selection)
                     .navigationTitle("Current game") //selection.name
-//                    .navigationBarTitleDisplayMode(.inline)
             } else {
                 Text("Choose a Game!")
             }
         }
-        .onAppear {
+        .navigationSplitViewStyle(.balanced)
+        .onAppear { // Toy implementation:
+//            games.append(WordBreaker(masterWord: "LOSE", attemptedWords:["FOOL"]))
+//            games.append(WordBreaker(masterWord: "WIN", attemptedWords: ["SIT", "OWL"]))
         }
     }
     
