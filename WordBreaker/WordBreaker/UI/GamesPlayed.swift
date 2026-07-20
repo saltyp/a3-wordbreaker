@@ -16,25 +16,42 @@ struct GamesPlayed: View {
     
     // MARK: Data Owned by Me
     @State private var games: [WordBreaker] = []
-//    @State private var selection: WordBreaker? = nil
+    @State private var selection: WordBreaker? = nil
     
     // MARK: - body
     var body: some View {
-        NavigationStack{
+        NavigationSplitView(columnVisibility: .constant(.all)) {
             // shows a dynamic list of games played (req task #1)
-            List(games) { game in
+            List(games, selection:$selection) { game in
                 NavigationLink {
-                    WordBreakerView(game: game)
+                    WordBreakerView(game:game)
                 } label: {
                     GameSummary(game:game)
                 }
-             }
+            }
+//            {
+//                ForEach(games) { game in
+//                    NavigationLink {
+//                        WordBreakerView(game: game)
+//                    } label: {
+//                        GameSummary(game:game)
+//                    }
+//                }
+//            }
             .listStyle(.plain)
             .toolbar {
                 addButton
                 EditButton()
             }
             .navigationTitle("Word Breaker")
+        } detail: { //rhs
+            if let selection {
+                WordBreakerView(game:selection)
+                    .navigationTitle("Current game") //selection.name
+//                    .navigationBarTitleDisplayMode(.inline)
+            } else {
+                Text("Choose a Game!")
+            }
         }
         .onAppear {
         }
