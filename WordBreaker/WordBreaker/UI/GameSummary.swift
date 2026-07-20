@@ -15,9 +15,12 @@ struct GameSummary: View {
     let game: WordBreaker
     
     var body: some View {
-        HStack {
-            CharSeqView(charSeq: game.lastAttempt, selection: .constant(0))
-                .frame(maxHeight: 65)
+        VStack(alignment: .leading) {
+            HStack {
+                CharSeqView(charSeq: game.lastAttempt, selection: .constant(0))
+                    .frame(maxHeight: 65)
+            }
+            Text("^[\(game.attempts.count) attempt](inflect:true)") //^[...] makes noun attempt adjust to number
         }
     }
 }
