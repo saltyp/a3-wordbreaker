@@ -17,9 +17,9 @@ struct GamesPlayed: View {
     var body: some View {
         NavigationStack{
             // shows a dynamic list of games played (req task #1)
-            List($games, id: \.masterWord) { $game in
+            List(games) { game in
                 NavigationLink {
-                    WordBreakerView(game: $game)
+                    WordBreakerView(game: game)
                 } label: {
                     GameSummary(game:game)
                 }
@@ -28,7 +28,7 @@ struct GamesPlayed: View {
         }
         .onAppear {
             // Toy implementation:
-            games.append(WordBreaker(masterWord: "LOSE", attemptedWords:["FOOD"]))
+            games.append(WordBreaker(masterWord: "LOSE", attemptedWords:["FOOL"]))
             games.append(WordBreaker(masterWord: "WIN", attemptedWords: ["SIT", "OWL"]))
         }
     }

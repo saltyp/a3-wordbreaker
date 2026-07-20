@@ -14,7 +14,7 @@ struct WordBreakerView: View {
     private static let maxWordLength = 6
     
     // MARK: Data Shared with Me
-    @Binding var game : WordBreaker
+    var game : WordBreaker
     
     // MARK: Data Owned By Me
     @State private var selection : Int = 0
@@ -25,17 +25,17 @@ struct WordBreakerView: View {
     var body: some View {
         VStack{
             view(for:game.masterCharSeq)
-                .onChange(of: words.count, initial: true) {
-                    if game.attempts.count == 0 { // don’t disrupt a game in progress
-                        if words.count == 0 { // no words (yet)
-                            game.masterCharSeq.word = "AWAIT"
-                        } else {
-                            let wordLength:Int = Int.random(in:WordBreakerView.minWordLength...WordBreakerView.maxWordLength)
-                            // reset game, not just masterword so that guess sequence is consistent (ie same #)
-                            game = WordBreaker(masterWord: words.random(length: wordLength) ?? "ERROR")
-                        }
-                    }
-                }
+//                .onChange(of: words.count, initial: true) {
+//                    if game.attempts.count == 0 { // don’t disrupt a game in progress
+//                        if words.count == 0 { // no words (yet)
+//                            game.masterCharSeq.word = "AWAIT"
+//                        } else {
+//                            let wordLength:Int = Int.random(in:WordBreakerView.minWordLength...WordBreakerView.maxWordLength)
+//                            // reset game, not just masterword so that guess sequence is consistent (ie same #)
+//                            game = WordBreaker(masterWord: words.random(length: wordLength) ?? "ERROR")
+//                        }
+//                    }
+//                }
             ScrollView {
                 if !game.isOver {
                     view(for:game.guess)
@@ -46,7 +46,7 @@ struct WordBreakerView: View {
                     ix in view(for:game.attempts[ix])
                 }.transition(.attempt(game.isOver)) //transition defined on entire CodeView
             }
-                newGameButton
+//                newGameButton
                 if !game.isOver {
                     PegChooserView(
                         choices:game.pegChoices,
@@ -64,20 +64,20 @@ struct WordBreakerView: View {
         .padding()
     }
                 
-    var newGameButton : some View {
-        Menu("New Game") {
-            Section("Word Length: ") {
-                ForEach(WordBreakerView.minWordLength...WordBreakerView.maxWordLength, id:\.self) {wordlen in
-                        Button("\(wordlen)") {
-                            withAnimation(.restart) {
-                                game = WordBreaker(masterWord: words.random(length: wordlen) ?? "ERROR")
-                            }
-                        }
-                    }
-                }
-        }
-        .newGameButtonStyling()
-    }
+//    var newGameButton : some View {
+//        Menu("New Game") {
+//            Section("Word Length: ") {
+//                ForEach(WordBreakerView.minWordLength...WordBreakerView.maxWordLength, id:\.self) {wordlen in
+//                        Button("\(wordlen)") {
+//                            withAnimation(.restart) {
+//                                game = WordBreaker(masterWord: words.random(length: wordlen) ?? "ERROR")
+//                            }
+//                        }
+//                    }
+//                }
+//        }
+//        .newGameButtonStyling()
+//    }
     
     var guessQWERTYButton: some View {
         Button("Guess") {guess()}
@@ -127,5 +127,5 @@ struct WordBreakerView: View {
 
 #Preview {
     @Previewable @State var game = WordBreaker(masterWord: "FOOD", attemptedWords: ["LAST", "FAST"])
-    WordBreakerView(game: $game)
+    WordBreakerView(game: game)
 }
