@@ -60,23 +60,7 @@ struct WordBreakerView: View {
                     .transition(.keyboard) // to move keyboard down instead of opacity
                 }
         }
-        .onAppear {
-            game.startTimer()
-        }
-        .onDisappear {
-            game.pauseTimer()
-        }
-        .onChange(of: game) { oldGame, newGame in
-            oldGame.pauseTimer()
-            newGame.startTimer()
-        }
-        .onChange(of: scenePhase) {
-                    switch scenePhase {
-                        case .active : game.startTimer()
-                        case .background: game.pauseTimer()
-                        default: break
-            }
-        }
+        .trackElapsedTime(in:game)
         .toolbar {
             ToolbarItem {
                 ElapsedTime(startTime:game.startTime, endTime: game.endTime, elapsedTime: game.elapsedTime)
@@ -145,7 +129,39 @@ struct WordBreakerView: View {
         static let maxFontSize : CGFloat = 200
         static let scaleFactor = minFontSize/maxFontSize
     }
+}
+
+// ViewModifier for elapsed time:
+extension View {
+    func trackElapsedTime(in game:WordBreaker) -> some View {
+        self.modifier(ElapsedTimeTracker(game: game))
+    }
+}
+
+struct ElapsedTimeTracker: ViewModifier {
+    @Environment(\.scenePhase) var scenePhase
+    let game: WordBreaker
     
+    func body(content: Content) -> some View {
+        content
+            .onAppear {
+                game.startTimer()
+            }
+            .onDisappear {
+                game.pauseTimer()
+            }
+            .onChange(of: game) { oldGame, newGame in
+                oldGame.pauseTimer()
+                newGame.startTimer()
+            }
+            .onChange(of: scenePhase) {
+                        switch scenePhase {
+                            case .active : game.startTimer()
+                            case .background: game.pauseTimer()
+                            default: break
+                }
+            }
+    }
 }
 
 #Preview {
