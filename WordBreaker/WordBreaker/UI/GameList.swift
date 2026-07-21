@@ -25,7 +25,7 @@ struct GameList: View {
             ForEach(games) {game in
                 NavigationLink(value:game) { //using value:game to only specify here what to show (ie label) with destination view specified below instead, & allow for List to update selection
                 GameSummary(game:game)
-//                    .tag(game as WordBreaker?) // redundant but using due to buggy Canvas
+//                    .tag(game as WordBreaker?) // redundant but using due to buggy Canvas (see docs)
                 }
             }
             .onDelete {offsets in games.remove(atOffsets: offsets)}
@@ -46,16 +46,25 @@ struct GameList: View {
     }
     
     var addButton: some View {
-        Button("Add Game", systemImage: "plus") {
-            addGame()
+        Menu("New Game", systemImage: "plus") {
+            Section("Word Length: ") {
+                ForEach(GameList.minWordLength...GameList.maxWordLength, id:\.self) {wordlen in
+                        Button("\(wordlen)") {
+                            withAnimation(.restart) {
+                                addGame(wordlen:wordlen)
+                            }
+                        }
+                    }
+                }
         }
+        .newGameButtonStyling()
     }
     
-    func addGame() {
+    func addGame(wordlen:Int) {
         if words.count == 0 { // no words (yet)
             games.insert(WordBreaker(masterWord: "AWAIT"), at: 0)
         } else {
-            games.insert(WordBreaker(masterWord: words.random(length: wordLength) ?? "ERROR"), at:0)
+            games.insert(WordBreaker(masterWord: words.random(length: wordlen) ?? "ERROR"), at:0)
         }
     }
     
