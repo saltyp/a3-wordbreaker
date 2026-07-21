@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ElapsedTime: View {
     
-    let startTime : Date? //start of current attempts
+    let startTime : Date? //start of *current* attempts (even if coming back to this game)
     let endTime : Date?
     let elapsedTime : TimeInterval
     
@@ -18,14 +18,17 @@ struct ElapsedTime: View {
         }
     
     var body: some View {
-        if startTime != nil {
+        if startTime != nil { //game is being played
             if let endTime {
                 Text(endTime, format:format)
             } else {
                 Text(TimeDataSource<Date>.currentDate, format:format)
             }
-        } else {
-            Image(systemName:"pause")
+        } else {  //game is not being played
+            HStack {
+                Image(systemName:"pause")
+                Text(Duration.seconds(elapsedTime), format: .time(pattern: .minuteSecond))
+            }
         }
                 
     }

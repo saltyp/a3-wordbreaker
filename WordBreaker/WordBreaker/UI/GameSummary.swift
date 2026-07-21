@@ -22,6 +22,7 @@ struct GameSummary: View {
                         .frame(maxHeight: 65)
                 }
                 Text("^[\(game.attempts.count) attempt](inflect:true)") //^[...] makes noun attempt adjust to number
+                ElapsedTime(startTime:game.startTime, endTime: game.endTime, elapsedTime: game.elapsedTime)
             }
             Spacer()
         }
