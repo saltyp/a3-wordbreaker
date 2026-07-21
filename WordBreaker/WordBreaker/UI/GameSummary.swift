@@ -15,13 +15,20 @@ struct GameSummary: View {
     let game: WordBreaker
     
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                CharSeqView(charSeq: game.lastAttempt, selection: .constant(0))
-                    .frame(maxHeight: 65)
+        HStack {
+            VStack(alignment: .leading) {
+                HStack {
+                    CharSeqView(charSeq: game.lastAttempt, selection: .constant(0))
+                        .frame(maxHeight: 65)
+                }
+                Text("^[\(game.attempts.count) attempt](inflect:true)") //^[...] makes noun attempt adjust to number
             }
-            Text("^[\(game.attempts.count) attempt](inflect:true)") //^[...] makes noun attempt adjust to number
+            Spacer()
         }
+        // to improve clickability : makes the row view occupy the full list row width & extra height to click
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, minHeight: 80, alignment: .leading)
+        .contentShape(Rectangle()) //
     }
 }
 

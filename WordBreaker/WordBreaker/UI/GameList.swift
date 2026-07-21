@@ -1,0 +1,78 @@
+//
+//  GameList.swift
+//  WordBreaker
+//
+//  Created by danielringskog on 7/21/26.
+//
+
+import SwiftUI
+
+
+struct GameList: View {
+    
+    @Environment(\.words) var words
+    private static let minWordLength = 3
+    private static let maxWordLength = 6
+
+    // MARK: Data shared with me
+    @Binding var selection: WordBreaker?
+    
+    // MARK: Data Owned by Me
+    @State private var games: [WordBreaker] = []
+    
+    var body: some View {
+        List(selection:$selection) {
+            ForEach(games) {game in
+                NavigationLink(value:game) { //using value:game to only specify here what to show (ie label) with destination view specified below instead, & allow for List to update selection
+                GameSummary(game:game)
+//                    .tag(game as WordBreaker?) // redundant but using due to buggy Canvas
+                }
+            }
+            .onDelete {offsets in games.remove(atOffsets: offsets)}
+        }
+        .onChange(of: games.count) { // in case of deleting game that is selected , reset selection :
+            if let selection, !games.contains(selection) {
+                self.selection = nil
+            }
+        }
+        .listStyle(.plain)
+        .toolbar {
+            addButton
+            EditButton()
+        }
+        .onAppear {
+            addSampleGames()
+        }
+    }
+    
+    var addButton: some View {
+        Button("Add Game", systemImage: "plus") {
+            addGame()
+        }
+    }
+    
+    func addGame() {
+        if words.count == 0 { // no words (yet)
+            games.insert(WordBreaker(masterWord: "AWAIT"), at: 0)
+        } else {
+            games.insert(WordBreaker(masterWord: words.random(length: wordLength) ?? "ERROR"), at:0)
+        }
+    }
+    
+    func addSampleGames() {
+        // Toy implementation:
+//        games.append(WordBreaker(masterWord: "LOSE", attemptedWords:["FOOL"]))
+//        games.append(WordBreaker(masterWord: "WIN", attemptedWords: ["SIT", "OWL"]))
+//        selection = games[Int.random(in:0..<games.count)]
+    }
+    
+    var wordLength: Int {
+        let wordLength:Int = Int.random(in:GameList.minWordLength...GameList.maxWordLength)
+//        let wordLength:Int = 5
+        return wordLength
+    }
+}
+
+//#Preview {
+//    GameList()
+//}
