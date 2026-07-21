@@ -57,6 +57,19 @@ struct WordBreakerView: View {
                     .transition(.keyboard) // to move keyboard down instead of opacity
                 }
         }
+        .onAppear {
+            game.startTimer()
+        }
+        .onDisappear {
+            game.pauseTimer()
+        }
+        .toolbar {
+            ToolbarItem {
+                ElapsedTime(startTime:game.startTime, endTime: game.endTime, elapsedTime: game.elapsedTime)
+                    .monospaced()
+                    .lineLimit(1)
+            }
+        }
         .padding()
     }
                 

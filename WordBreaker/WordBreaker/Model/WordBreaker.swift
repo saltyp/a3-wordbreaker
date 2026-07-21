@@ -43,6 +43,10 @@ enum ChoiceBestSoFar: Int {
     let pegChoices : [Peg] = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }// choices available to make a guess
     var pegChoiceRecord : [Peg:ChoiceBestSoFar]
     
+    var startTime: Date?
+    var endTime: Date?
+    var elapsedTime: TimeInterval = 0
+    
     
     init(masterWord: String) {
         self.masterWord = masterWord
@@ -66,8 +70,20 @@ enum ChoiceBestSoFar: Int {
         }
     }
     
+    func startTimer() {
+        if startTime == nil, !isOver {
+            startTime = .now
+        }
+    }
     
-    //MARK: - body
+    func pauseTimer() {
+        if let startTime {
+            elapsedTime += Date.now.timeIntervalSince(startTime)
+        }
+        startTime = nil
+    }
+    
+    
     var isOver: Bool {
         attempts.last?.pegs == masterCharSeq.pegs
     }
@@ -95,6 +111,8 @@ enum ChoiceBestSoFar: Int {
         guess.reset()
         if isOver {
             masterCharSeq.kind = .mastercode(isHidden: false)
+            endTime = .now
+            pauseTimer()
         }
     }
     
