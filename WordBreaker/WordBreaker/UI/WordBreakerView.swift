@@ -10,7 +10,7 @@ import SwiftUI
 struct WordBreakerView: View {
     
     // MARK: Data Shared with Me
-    var game : WordBreaker
+    var game : WordBreaker  //TODO: let or var ?
     
     // MARK: Data Owned By Me
     @State private var selection : Int = 0
@@ -62,6 +62,10 @@ struct WordBreakerView: View {
         }
         .onDisappear {
             game.pauseTimer()
+        }
+        .onChange(of: game) { oldGame, newGame in
+            oldGame.pauseTimer()
+            newGame.startTimer()
         }
         .toolbar {
             ToolbarItem {
