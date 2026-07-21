@@ -9,6 +9,9 @@ import SwiftUI
 
 struct WordBreakerView: View {
     
+    // MARK: Data In
+    @Environment(\.scenePhase) var scenePhase //enum with .active(app), .background
+    
     // MARK: Data Shared with Me
     var game : WordBreaker  //TODO: let or var ?
     
@@ -66,6 +69,13 @@ struct WordBreakerView: View {
         .onChange(of: game) { oldGame, newGame in
             oldGame.pauseTimer()
             newGame.startTimer()
+        }
+        .onChange(of: scenePhase) {
+                    switch scenePhase {
+                        case .active : game.startTimer()
+                        case .background: game.pauseTimer()
+                        default: break
+            }
         }
         .toolbar {
             ToolbarItem {
