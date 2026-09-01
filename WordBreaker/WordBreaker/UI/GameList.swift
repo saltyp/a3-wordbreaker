@@ -37,12 +37,26 @@ struct GameList: View {
         }
         .listStyle(.plain)
         .toolbar {
-            addButton
-            EditButton()
+            ToolbarItem(placement: .cancellationAction) {
+                settingsButton
+            }
+            ToolbarItem(placement:.confirmationAction) {
+                addButton
+            }
+            ToolbarItem(placement:.confirmationAction) {
+                EditButton()
+            }
         }
         .onAppear {
             addSampleGames()
         }
+    }
+    
+    var settingsButton: some View {
+        Button("Settings", systemImage: "gearshape") {
+            //let showSettings = true
+        }
+//        .sheet(isPresented: true) {  }
     }
     
     var addButton: some View {
