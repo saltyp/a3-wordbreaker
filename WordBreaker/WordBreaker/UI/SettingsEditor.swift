@@ -9,6 +9,11 @@ import SwiftUI
 
 struct SettingsEditor: View {
     
+    @Environment(\.dismiss) var dismiss  //to dismiss screen
+    
+    //MARK: Data Shared with Me
+    @Environment(\.words) var words
+    
     //MARK: Data owned by Me (for now;later to be shared with me)
     @State private var helperColors: [Color] = [.green,.blue,.red]
     @State private var helperColorMapping: [String] = ["Exact Match", "Near Match", "No Match"]
@@ -33,7 +38,7 @@ struct SettingsEditor: View {
                 Section("Default Word Length") {
                  Picker("Default Word Length", selection: $defaultWordLength) {
                      ForEach(2...10, id: \.self) {number in
-                         Text("\(number)")
+                         Text("\(number) (\(words.numWordsOfLength(number)) words)")
                      }
                  }
                 }
@@ -41,12 +46,13 @@ struct SettingsEditor: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
-                        //dismiss()
+                        dismiss()
                     }
                 }
                 ToolbarItem(placement:.confirmationAction) {
                     Button("Done") {
-                        //done()
+                        // TODO: copy over settings
+                        dismiss()
                     }
                 }
             }

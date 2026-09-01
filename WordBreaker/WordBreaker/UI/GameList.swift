@@ -19,6 +19,7 @@ struct GameList: View {
     
     // MARK: Data Owned by Me
     @State private var games: [WordBreaker] = []
+    @State private var showSettingsEditor: Bool = false
     
     var body: some View {
         List(selection:$selection) {
@@ -54,10 +55,14 @@ struct GameList: View {
     
     var settingsButton: some View {
         Button("Settings", systemImage: "gearshape") {
-            //let showSettings = true
+            showSettingsEditor = true
         }
-//        .sheet(isPresented: true) {  }
+        .sheet(isPresented: $showSettingsEditor, onDismiss: {showSettingsEditor = false}) {
+            SettingsEditor()
+        }
     }
+    
+    
     
     var addButton: some View {
         Menu("New Game", systemImage: "plus") {

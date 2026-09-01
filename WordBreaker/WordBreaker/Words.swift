@@ -52,6 +52,11 @@ class Words {
         }
         return word
     }
+    
+    func numWordsOfLength(_ length: Int) -> Int {
+        return words[length]?.count ?? 0
+    }
+
 }
 
 extension UITextChecker {
