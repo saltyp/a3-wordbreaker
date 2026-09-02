@@ -15,28 +15,25 @@ struct SettingsEditor: View {
     @Environment(\.gameSettings) var gameSettings  // gives read.write access to object, but does not bind yet
     
     //MARK: Data Owned by Me
-    
+    @State private var draft = GameSettingsDraft(from:GameSettings.shared)
     
     var body: some View {
-        @Bindable var gameSettings = gameSettings  // binding to above gameSettings
-        
         NavigationStack {
             Form {
                 Section("Keyboard Hint Colors") {
                     List {
-                        ForEach(gameSettings.helperColors.indices, id: \.self) { index in
+                        ForEach(draft.helperColors.indices, id: \.self) { index in
                             ColorPicker(
-                                selection: $gameSettings.helperColors[index],
+                                selection: $draft.helperColors[index],
                                 supportsOpacity: false
                             ) {
                                 Text(gameSettings.helperColorMapping[index])
                             }
                         }
-                        
                     }
                 }
                 Section("Default Word Length") {
-                    Picker("Default Word Length", selection: $gameSettings.defaultWordLength) {
+                    Picker("Default Word Length", selection: $draft.defaultWordLength) {
                      ForEach(2...10, id: \.self) {number in
                          Text("\(number) (\(words.numWordsOfLength(number)) words)")
                      }
@@ -51,7 +48,7 @@ struct SettingsEditor: View {
                 }
                 ToolbarItem(placement:.confirmationAction) {
                     Button("Done") {
-                        // TODO: copy over settings
+                        draft.apply(to: gameSettings)
                         dismiss()
                     }
                 }
@@ -60,6 +57,21 @@ struct SettingsEditor: View {
     }
 }
 
+/// struct to store and then eventually apply if settings screen is "Done" clicked
+struct GameSettingsDraft {
+    var helperColors: [Color]
+    var defaultWordLength: Int
+    
+    init(from settings: GameSettings) {
+        self.helperColors = settings.helperColors
+        self.defaultWordLength = settings.defaultWordLength
+    }
+    
+    func apply(to settings:GameSettings) {
+        settings.helperColors = helperColors
+        settings.defaultWordLength = defaultWordLength
+    }
+}
 
 #Preview {
     SettingsEditor()
