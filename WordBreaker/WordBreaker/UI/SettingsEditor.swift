@@ -22,25 +22,25 @@ struct SettingsEditor: View {
             Form {
                 Section("Keyboard Hint Colors") {
                     List {
-                        ForEach(draft.helperColors.indices, id: \.self) { index in
+                        ForEach(GameSettings.HelperKind.allCases, id: \.self) { kind in
                             ColorPicker(
-                                selection: $draft.helperColors[index],
+                                selection: colorBinding(for: kind),
                                 supportsOpacity: false
                             ) {
-                                Text(gameSettings.helperColorMapping[index])
+                                Text(kind.label)
                             }
                         }
                     }
                 }
                 Section("Default Word Length") {
                     Picker("Default Word Length", selection: $draft.defaultWordLength) {
-                     ForEach(2...10, id: \.self) {number in
-                         let numAvailableWords = words.numWordsOfLength(number)
-                         if numAvailableWords > 0 {
-                             Text("\(number) (\(numAvailableWords) words)")
-                         }
-                     }
-                 }
+                        ForEach(2...10, id: \.self) {number in
+                            let numAvailableWords = words.numWordsOfLength(number)
+                            if numAvailableWords > 0 {
+                                Text("\(number) (\(numAvailableWords) words)")
+                            }
+                        }
+                    }
                 }
             }
             .toolbar {
@@ -61,15 +61,23 @@ struct SettingsEditor: View {
             draft = GameSettingsDraft(from: gameSettings)
         }
     }
+    
+    func colorBinding(for kind: GameSettings.HelperKind)-> Binding<Color> {
+        Binding<Color>(
+            get: { draft.helperColors[kind] ?? .gray },
+            set: { draft.helperColors[kind] = $0 }
+        )
+    }
+    
 }
 
 /// struct to store and then eventually apply if settings screen is "Done" clicked
 struct GameSettingsDraft {
-    var helperColors: [Color]
+    var helperColors: [GameSettings.HelperKind: Color]
     var defaultWordLength: Int
     
     init() {
-        self.helperColors = [.red,.blue, .yellow]
+        self.helperColors = [.exact:.green, .inexact:.blue, .noMatch:.gray]
         self.defaultWordLength = 4
     }
     
