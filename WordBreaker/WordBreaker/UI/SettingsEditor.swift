@@ -15,7 +15,7 @@ struct SettingsEditor: View {
     @Environment(\.gameSettings) var gameSettings  // gives read.write access to object, but does not bind yet
     
     //MARK: Data Owned by Me
-    @State private var draft = GameSettingsDraft(from:GameSettings.shared)
+    @State private var draft = GameSettingsDraft()
     
     var body: some View {
         NavigationStack {
@@ -54,6 +54,9 @@ struct SettingsEditor: View {
                 }
             }
         }
+        .onAppear {
+            draft = GameSettingsDraft(from: gameSettings)
+        }
     }
 }
 
@@ -61,6 +64,11 @@ struct SettingsEditor: View {
 struct GameSettingsDraft {
     var helperColors: [Color]
     var defaultWordLength: Int
+    
+    init() {
+        self.helperColors = [.red,.blue, .yellow]
+        self.defaultWordLength = 4
+    }
     
     init(from settings: GameSettings) {
         self.helperColors = settings.helperColors
