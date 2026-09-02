@@ -11,6 +11,7 @@ import SwiftUI
 struct GameList: View {
     
     @Environment(\.words) var words
+    @Environment(\.gameSettings) var gameSettings
     private static let minWordLength = 3
     private static let maxWordLength = 6
 
@@ -74,6 +75,9 @@ struct GameList: View {
                             }
                         }
                     }
+                Button("Default") {
+                    addGame(wordlen:gameSettings.defaultWordLength)
+                }
                 }
         }
         .newGameButtonStyling()

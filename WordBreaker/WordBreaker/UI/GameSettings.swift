@@ -14,7 +14,7 @@ extension EnvironmentValues {
 @Observable
 class GameSettings {
     var helperColorMapping: [String] = ["Exact Match", "Near Match", "No Match"]
-    var helperColors: [Color] = [.green,.blue,.red]
+    var helperColors: [Color] = [.green,.blue,.gray]
     var defaultWordLength: Int = 4
     
     // singleton instance to share:

@@ -8,10 +8,13 @@
 import SwiftUI
 
 struct CharSeqView: View {
+    
     // MARK: Data In
     let charSeq : CharSeq
+
     // MARK: Data Shared with Me
     @Binding var selection: Int
+    @Environment(\.gameSettings) var gameSettings
     
     // MARK: - Body
     
@@ -49,9 +52,9 @@ struct CharSeqView: View {
     
     func matchOverlayColor(for match:Match) -> Color {
         switch match {
-            case .exact   : .green
-            case .inexact : .blue
-            case .nomatch : .gray
+            case .exact   : gameSettings.helperColors[0]
+            case .inexact : gameSettings.helperColors[1]
+            case .nomatch : gameSettings.helperColors[2]
         }
     }
     
