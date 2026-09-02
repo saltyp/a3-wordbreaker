@@ -35,7 +35,10 @@ struct SettingsEditor: View {
                 Section("Default Word Length") {
                     Picker("Default Word Length", selection: $draft.defaultWordLength) {
                      ForEach(2...10, id: \.self) {number in
-                         Text("\(number) (\(words.numWordsOfLength(number)) words)")
+                         let numAvailableWords = words.numWordsOfLength(number)
+                         if numAvailableWords > 0 {
+                             Text("\(number) (\(numAvailableWords) words)")
+                         }
                      }
                  }
                 }
