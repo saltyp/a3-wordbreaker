@@ -9,34 +9,34 @@ import SwiftUI
 
 struct SettingsEditor: View {
     
-    @Environment(\.dismiss) var dismiss  //to dismiss screen
-    
     //MARK: Data Shared with Me
+    @Environment(\.dismiss) var dismiss  //to dismiss screen
     @Environment(\.words) var words
+    @Environment(\.gameSettings) var gameSettings  // gives read.write access to object, but does not bind yet
     
-    //MARK: Data owned by Me (for now;later to be shared with me)
-    @State private var helperColors: [Color] = [.green,.blue,.red]
-    @State private var helperColorMapping: [String] = ["Exact Match", "Near Match", "No Match"]
-    @State private var defaultWordLength: Int = 4
+    //MARK: Data Owned by Me
+    
     
     var body: some View {
+        @Bindable var gameSettings = gameSettings  // binding to above gameSettings
+        
         NavigationStack {
             Form {
                 Section("Keyboard Hint Colors") {
                     List {
-                        ForEach(helperColors.indices, id: \.self) { index in
+                        ForEach(gameSettings.helperColors.indices, id: \.self) { index in
                             ColorPicker(
-                                selection: $helperColors[index],
+                                selection: $gameSettings.helperColors[index],
                                 supportsOpacity: false
                             ) {
-                                Text(helperColorMapping[index])
+                                Text(gameSettings.helperColorMapping[index])
                             }
                         }
                         
                     }
                 }
                 Section("Default Word Length") {
-                 Picker("Default Word Length", selection: $defaultWordLength) {
+                    Picker("Default Word Length", selection: $gameSettings.defaultWordLength) {
                      ForEach(2...10, id: \.self) {number in
                          Text("\(number) (\(words.numWordsOfLength(number)) words)")
                      }
@@ -59,6 +59,7 @@ struct SettingsEditor: View {
         }
     }
 }
+
 
 #Preview {
     SettingsEditor()
