@@ -22,7 +22,7 @@ struct SettingsEditor: View {
             Form {
                 Section("Keyboard Hint Colors") {
                     List {
-                        ForEach(GameSettings.HelperKind.allCases, id: \.self) { kind in
+                        ForEach(Match.allCases, id: \.self) { kind in
                             ColorPicker(
                                 selection: colorBinding(for: kind),
                                 supportsOpacity: false
@@ -62,7 +62,7 @@ struct SettingsEditor: View {
         }
     }
     
-    func colorBinding(for kind: GameSettings.HelperKind)-> Binding<Color> {
+    func colorBinding(for kind: Match)-> Binding<Color> {
         Binding<Color>(
             get: { draft.helperColors[kind] ?? .gray },
             set: { draft.helperColors[kind] = $0 }
@@ -73,7 +73,7 @@ struct SettingsEditor: View {
 
 /// struct to store and then eventually apply if settings screen is "Done" clicked
 struct GameSettingsDraft {
-    var helperColors: [GameSettings.HelperKind: Color]
+    var helperColors: [Match: Color]
     var defaultWordLength: Int
     
     init() {
@@ -82,12 +82,12 @@ struct GameSettingsDraft {
     }
     
     init(from settings: GameSettings) {
-        self.helperColors = settings.helperColors
+        self.helperColors = settings.helperPegColors
         self.defaultWordLength = settings.defaultWordLength
     }
     
     func apply(to settings:GameSettings) {
-        settings.helperColors = helperColors
+        settings.helperPegColors = helperColors
         settings.defaultWordLength = defaultWordLength
     }
 }

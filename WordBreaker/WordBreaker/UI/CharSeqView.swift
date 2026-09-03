@@ -51,13 +51,7 @@ struct CharSeqView: View {
     }
     
     func matchOverlayColor(for match:Match) -> Color {
-        let kind : GameSettings.HelperKind
-        switch match {
-            case .exact   : kind = .exact
-            case .inexact : kind = .inexact
-            case .nomatch : kind = .noMatch
-        }
-        return gameSettings.helperColors[kind] ?? .gray
+        return gameSettings.helperPegColors[match] ?? .gray
     }
     
 }

@@ -76,7 +76,7 @@ struct CharSeq : Equatable{
                 pegsToMatch.remove(at: index)  // eg mastercode pegs removed to avoid double count
                 return Match.exact
             } else {
-                return .nomatch
+                return .noMatch
             }
         }
         // calculate inexact matches eg results -> [.inexact, .exact, .nomatch, .exact]

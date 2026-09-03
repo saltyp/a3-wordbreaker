@@ -67,7 +67,7 @@ struct PegChooserView<LeftExtraButton:View, RightExtraButton:View>: View {
         switch bestSoFar {
             case .exact   : .green
             case .inexact : .blue
-            case .nomatch : .red
+            case .noMatch : .red
             case .notUsedYet : .black
         }
     }    
@@ -98,6 +98,6 @@ func chunk(_ fullArray: [Peg], by chunkSizes: [Int]) -> [[Peg]] {
 #Preview {
     let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }
     PegChooserView(choices:pegChoices,
-                   bestSoFars: ["A":.notUsedYet,"B":.exact,"C":.nomatch,"D":.inexact],
+                   bestSoFars: ["A":.notUsedYet,"B":.exact,"C":.noMatch,"D":.inexact],
                    onChoose: nil)
 }

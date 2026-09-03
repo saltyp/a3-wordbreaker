@@ -9,15 +9,24 @@ import Foundation
 
 typealias Peg = String // no need for enum Peg with just one var
 
-enum Match: Int {
-    case nomatch = 0
+enum Match: Int, CaseIterable {
+    case noMatch = 0
     case inexact
     case exact
+    
+    var label: String {
+        switch self {
+        case .exact: "Exact Match"
+        case .inexact: "Near Match"
+        case .noMatch: "No Match"
+        }
+    }
+
 }
 
 enum ChoiceBestSoFar: Int {
     case notUsedYet = -1
-    case nomatch
+    case noMatch
     case inexact
     case exact
 
