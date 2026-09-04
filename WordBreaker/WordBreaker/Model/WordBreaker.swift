@@ -22,7 +22,6 @@ enum Match: Int, CaseIterable {
         case .noMatch: "No Match"
         }
     }
-
 }
 
 enum ChoiceBestSoFar: Int, Codable {
@@ -50,6 +49,8 @@ enum ChoiceBestSoFar: Int, Codable {
     @Relationship(deleteRule: .cascade) var masterCharSeq: CharSeq = CharSeq(kind: .mastercode(isHidden: isMasterHidden))
     @Relationship(deleteRule: .cascade) var guess : CharSeq = CharSeq(kind: .guess)  // current guess in progress
     @Relationship(deleteRule: .cascade) var attempts : [CharSeq] = [CharSeq]()  // all attempts made
+    static let alphabetKeyboard = "QWERTYUIOPASDFGHJKLZXCVBNM"
+    static let pegChoices = WordBreaker.alphabetKeyboard.map { String($0)}
     var pegChoices : [Peg] //= "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }// choices available to make a guess
     var pegChoiceRecord : [Peg:ChoiceBestSoFar]
     
@@ -59,23 +60,21 @@ enum ChoiceBestSoFar: Int, Codable {
     
     
     init(masterWord: String) {
-        let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }  //TODO: clean this up w static let alphabet, static let pegChoices, self.pegChoices = WordBreaker.pegChoices
-        self.pegChoices = pegChoices
+        self.pegChoices = WordBreaker.pegChoices
         self.masterWord = masterWord
         self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: WordBreaker.isMasterHidden), pegs: masterWord.map {String($0)})
         self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
-        self.pegChoiceRecord = Dictionary( uniqueKeysWithValues: pegChoices.map { ($0, .notUsedYet) })
+        self.pegChoiceRecord = Dictionary( uniqueKeysWithValues: WordBreaker.pegChoices.map { ($0, .notUsedYet) })
         print(masterWord)
     }
     
     // initializer for creating a mid-stream game with set attempts
     init(masterWord:String, attemptedWords:[String]) {
-        let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }
-        self.pegChoices = pegChoices
+        self.pegChoices = WordBreaker.pegChoices
         self.masterWord = masterWord
         self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: WordBreaker.isMasterHidden), pegs: masterWord.map {String($0)})
         self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
-        self.pegChoiceRecord = Dictionary( uniqueKeysWithValues: pegChoices.map { ($0, .notUsedYet) })
+        self.pegChoiceRecord = Dictionary( uniqueKeysWithValues: WordBreaker.pegChoices.map { ($0, .notUsedYet) })
         for word in attemptedWords {
             // produce new attempt that will show matches
             self.guess.word = word
@@ -113,10 +112,8 @@ enum ChoiceBestSoFar: Int, Codable {
         if guess.pegs.allSatisfy({$0 == CharSeq.missing}) { return }
         // ignore attempts where the charseq is not a valid word
         if !guessIsValidWord { return }
-        
-        var attempt = guess  // change kind of Code to an attempt, from a guess
         let matches = guess.match(against: masterCharSeq)
-        attempt.kind = .attempt(matches)  // set kind to an attempt with the associated data of (calculated) matches
+        let attempt = CharSeq(kind: .attempt(matches), pegs: guess.pegs)
         // TODO: better to use this with enum kind
         for index in 0..<attempt.pegs.count {
             pegChoiceRecord[attempt.pegs[index]]?.update(matches[index])
