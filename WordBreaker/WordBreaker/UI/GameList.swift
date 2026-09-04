@@ -6,35 +6,44 @@
 //
 
 import SwiftUI
+import SwiftData
 
 
 struct GameList: View {
     
+    // MARK: Data in
     @Environment(\.words) var words
     @Environment(\.gameSettings) var gameSettings
+    @Environment(\.modelContext) var modelContext
     private static let minWordLength = 3
     private static let maxWordLength = 6
 
     // MARK: Data shared with me
     @Binding var selection: WordBreaker?
+    @Query private var games: [WordBreaker]
     
     // MARK: Data Owned by Me
-    @State private var games: [WordBreaker] = []
+//    @State private var games: [WordBreaker] = []
     @State private var showSettingsEditor: Bool = false
     
     var body: some View {
+        
         List(selection:$selection) {
             ForEach(games) {game in
                 NavigationLink(value:game) { //using value:game to only specify here what to show (ie label) with destination view specified below instead, & allow for List to update selection
-                GameSummary(game:game)
-//                    .tag(game as WordBreaker?) // redundant but using due to buggy Canvas (see docs)
+                    GameSummary(game:game)
+                    //                    .tag(game as WordBreaker?) // redundant but using due to buggy Canvas (see docs)
                 }
             }
-            .onDelete {offsets in games.remove(atOffsets: offsets)}
-        }
-        .onChange(of: games.count) { // in case of deleting game that is selected , reset selection :
-            if let selection, !games.contains(selection) {
-                self.selection = nil
+            .onDelete {offsets in
+                for offset in offsets {
+                    modelContext.delete(games[offset])
+                }
+            }
+            .onChange(of: games.count) { // in case of deleting game that is selected , reset selection :
+                if let selection, !games.contains(selection) {
+                    self.selection = nil
+                }
             }
         }
         .listStyle(.plain)
@@ -63,8 +72,6 @@ struct GameList: View {
         }
     }
     
-    
-    
     var addButton: some View {
         Menu("New Game", systemImage: "plus") {
             Section("Word Length: ") {
@@ -78,16 +85,16 @@ struct GameList: View {
                 Button("Default") {
                     addGame(wordlen:gameSettings.defaultWordLength)
                 }
-                }
+            }
         }
         .newGameButtonStyling()
     }
     
     func addGame(wordlen:Int) {
         if words.count == 0 { // no words (yet)
-            games.insert(WordBreaker(masterWord: "AWAIT"), at: 0)
+            modelContext.insert(WordBreaker(masterWord: "AWAIT"))
         } else {
-            games.insert(WordBreaker(masterWord: words.random(length: wordlen) ?? "ERROR"), at:0)
+            modelContext.insert(WordBreaker(masterWord: words.random(length: wordlen) ?? "ERROR"))
         }
     }
     
