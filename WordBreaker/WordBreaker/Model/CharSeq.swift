@@ -13,6 +13,7 @@ import SwiftData
     var _kind : String = Kind.unknown.description
     var pegs : [Peg]
     var seqLength: Int
+    var timestamp = Date.now  // to maintain order of games
     
     static let missing : Peg = ""
     

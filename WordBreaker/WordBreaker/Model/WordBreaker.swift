@@ -48,7 +48,7 @@ enum ChoiceBestSoFar: Int, Codable {
     var guessIsValidWord: Bool = false
     @Relationship(deleteRule: .cascade) var masterCharSeq: CharSeq = CharSeq(kind: .mastercode(isHidden: isMasterHidden))
     @Relationship(deleteRule: .cascade) var guess : CharSeq = CharSeq(kind: .guess)  // current guess in progress
-    @Relationship(deleteRule: .cascade) var attempts : [CharSeq] = [CharSeq]()  // all attempts made
+    @Relationship(deleteRule: .cascade) var _attempts : [CharSeq] = [CharSeq]()  // all attempts made
     static let alphabetKeyboard = "QWERTYUIOPASDFGHJKLZXCVBNM"
     static let pegChoices = WordBreaker.alphabetKeyboard.map { String($0)}
     var pegChoices : [Peg] //= "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }// choices available to make a guess
@@ -58,6 +58,12 @@ enum ChoiceBestSoFar: Int, Codable {
     var endTime: Date?
     var elapsedTime: TimeInterval = 0
     
+    var created = Date.now  // to maintain order of games
+    
+    var attempts : [CharSeq] { // _attempts to pull from db, attempts to display in correct order
+        get { _attempts.sorted { $0.timestamp < $1.timestamp }}
+        set { _attempts = newValue }
+    }
     
     init(masterWord: String) {
         self.pegChoices = WordBreaker.pegChoices

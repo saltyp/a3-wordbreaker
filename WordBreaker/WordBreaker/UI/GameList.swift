@@ -20,7 +20,7 @@ struct GameList: View {
 
     // MARK: Data shared with me
     @Binding var selection: WordBreaker?
-    @Query private var games: [WordBreaker]
+    @Query(sort: \WordBreaker.created, order: .reverse) private var games: [WordBreaker]
     
     // MARK: Data Owned by Me
 //    @State private var games: [WordBreaker] = []
