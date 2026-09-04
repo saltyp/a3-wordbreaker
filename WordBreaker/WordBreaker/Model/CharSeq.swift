@@ -6,27 +6,33 @@
 //
 
 import Foundation
+import SwiftData
 
-struct CharSeq : Equatable{
+@Model class CharSeq : Equatable {
     //MARK: Data In
-    var kind : Kind
+    var _kind : String = Kind.unknown.description
     var pegs : [Peg]
     var seqLength: Int
     
     static let missing : Peg = ""
     
+    var kind: Kind {
+        get { return Kind(_kind) }
+        set { _kind = newValue.description}
+    }
+    
     /// empty initializer
     init(kind: Kind, wordLength: Int = 4) {
-        self.kind = kind
         self.seqLength = wordLength
         self.pegs = Array(repeating: CharSeq.missing, count: wordLength)
+        self.kind = kind
     }
     
     /// non-empty initializer
     init(kind: Kind, pegs: [Peg]) {
-        self.kind = kind
         self.pegs = pegs
         self.seqLength = pegs.count
+        self.kind = kind
     }
         
     /// get/set the pegs in a Code to a String
@@ -34,14 +40,7 @@ struct CharSeq : Equatable{
         get { pegs.joined() }
         set { pegs = newValue.map { String($0) } }
     }
-    
-    enum Kind : Equatable { //define enum as Equatable so that we automatically get '==' fxn w/o needing to define it
-        case mastercode(isHidden:Bool)
-        case guess
-        case attempt([Match]) //associated data
-        case unknown
-    }
-    
+        
 //    mutating func randomize(from pegChoices: [Peg]) {
 //        for ix in pegs.indices {
 //            pegs[ix] = pegChoices.randomElement() ?? Code.missingPeg
@@ -55,7 +54,7 @@ struct CharSeq : Equatable{
         }
     }
     
-    mutating func reset() {
+    func reset() {
         pegs = Array(repeating: CharSeq.missing, count: seqLength)
     }
     

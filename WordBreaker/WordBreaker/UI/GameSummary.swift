@@ -33,7 +33,7 @@ struct GameSummary: View {
     }
 }
 
-#Preview {
+#Preview(traits: .swiftData) {
     let masterWord = "WIN"
     let attemptedWords = ["WHY", "SIT","OWL"] //last in array = last attempted
     var newGame = WordBreaker(masterWord: masterWord, attemptedWords: attemptedWords)

@@ -56,6 +56,6 @@ struct CharSeqView: View {
     
 }
 
-#Preview {
+#Preview(traits: .swiftData) {
     CharSeqView(charSeq: CharSeq(kind: .mastercode(isHidden: true), pegs:["a","p","p","l","e"]), selection: .constant(1))
 }

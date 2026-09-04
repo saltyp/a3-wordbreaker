@@ -164,7 +164,7 @@ struct ElapsedTimeTracker: ViewModifier {
     }
 }
 
-#Preview {
+#Preview(traits: .swiftData) {
     @Previewable @State var game = WordBreaker(masterWord: "FOOD", attemptedWords: ["LAST", "FAST"])
     WordBreakerView(game: game)
 }

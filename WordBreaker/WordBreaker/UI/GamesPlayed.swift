@@ -30,6 +30,6 @@ struct GamesPlayed: View {
             
 }
 
-#Preview {
+#Preview(traits: .swiftData) {
     GamesPlayed()
 }

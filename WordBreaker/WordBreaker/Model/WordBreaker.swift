@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftData
 
 typealias Peg = String // no need for enum Peg with just one var
 
@@ -24,7 +25,7 @@ enum Match: Int, CaseIterable {
 
 }
 
-enum ChoiceBestSoFar: Int {
+enum ChoiceBestSoFar: Int, Codable {
     case notUsedYet = -1
     case noMatch
     case inexact
@@ -38,26 +39,28 @@ enum ChoiceBestSoFar: Int {
 }
 
 
-@Observable class WordBreaker {
+@Model class WordBreaker {
     
     //MARK: Data In
-    let masterWord: String //actually mutable since masterCharSeq is mutable!
+    var masterWord: String //actually mutable since masterCharSeq is mutable!
     
     //MARK: - body
     static private let isMasterHidden = true
     var guessIsValidWord: Bool = false
-    var masterCharSeq: CharSeq = CharSeq(kind: .mastercode(isHidden: isMasterHidden))
-    var guess : CharSeq = CharSeq(kind: .guess)  // current guess in progress
-    var attempts : [CharSeq] = [CharSeq]()  // all attempts made
-    let pegChoices : [Peg] = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }// choices available to make a guess
+    @Relationship(deleteRule: .cascade) var masterCharSeq: CharSeq = CharSeq(kind: .mastercode(isHidden: isMasterHidden))
+    @Relationship(deleteRule: .cascade) var guess : CharSeq = CharSeq(kind: .guess)  // current guess in progress
+    @Relationship(deleteRule: .cascade) var attempts : [CharSeq] = [CharSeq]()  // all attempts made
+    var pegChoices : [Peg] //= "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }// choices available to make a guess
     var pegChoiceRecord : [Peg:ChoiceBestSoFar]
     
-    var startTime: Date?
+    @Transient var startTime: Date?
     var endTime: Date?
     var elapsedTime: TimeInterval = 0
     
     
     init(masterWord: String) {
+        let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }  //TODO: clean this up w static let alphabet, static let pegChoices, self.pegChoices = WordBreaker.pegChoices
+        self.pegChoices = pegChoices
         self.masterWord = masterWord
         self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: WordBreaker.isMasterHidden), pegs: masterWord.map {String($0)})
         self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
@@ -67,6 +70,8 @@ enum ChoiceBestSoFar: Int {
     
     // initializer for creating a mid-stream game with set attempts
     init(masterWord:String, attemptedWords:[String]) {
+        let pegChoices = "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }
+        self.pegChoices = pegChoices
         self.masterWord = masterWord
         self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: WordBreaker.isMasterHidden), pegs: masterWord.map {String($0)})
         self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
@@ -82,6 +87,7 @@ enum ChoiceBestSoFar: Int {
     func startTimer() {
         if startTime == nil, !isOver {
             startTime = .now
+            elapsedTime += 0.00001 //hack to force SwiftUI to update due to @Transient bug
         }
     }
     
