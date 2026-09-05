@@ -17,6 +17,7 @@ struct GameList: View {
     @Environment(\.modelContext) var modelContext
     private static let minWordLength = 3
     private static let maxWordLength = 6
+    var show: ShowOption = .all
 
     // MARK: Data shared with me
     @Binding var selection: WordBreaker?
@@ -25,7 +26,22 @@ struct GameList: View {
     // MARK: Data Owned by Me
     @State private var showSettingsEditor: Bool = false
     
-    init(nameContains search : String = "", selection: Binding<WordBreaker?>) {
+    enum ShowOption: CaseIterable {
+        case all
+        case completed
+        case inProgress
+        
+        var title: String {
+            switch self {
+                case .all: "Show all"
+                case .inProgress: "uncompleted"
+                case .completed: "completed"
+            }
+        }
+    }
+    
+    init(show: ShowOption, nameContains search : String = "", selection: Binding<WordBreaker?>) {
+        self.show = show
         _selection = selection
         let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
         // break up query into 2 separate Query initializations to avoid SwiftData compiling predicate as relationship query:
@@ -41,10 +57,20 @@ struct GameList: View {
         }
     }
     
+    var shownGames: [WordBreaker] {
+        games.filter { game in
+            switch show {
+                case .all : true
+                case .completed : game.endTime != nil
+                case .inProgress : game.endTime == nil
+            }
+        }
+    }
+    
     var body: some View {
         
         List(selection:$selection) {
-            ForEach(games) {game in
+            ForEach(shownGames) {game in
                 NavigationLink(value:game) { //using value:game to only specify here what to show (ie label) with destination view specified below instead, & allow for List to update selection
                     GameSummary(game:game)
                     //                    .tag(game as WordBreaker?) // redundant but using due to buggy Canvas (see docs)
@@ -52,7 +78,7 @@ struct GameList: View {
             }
             .onDelete {offsets in
                 for offset in offsets {
-                    modelContext.delete(games[offset])
+                    modelContext.delete(shownGames[offset])
                 }
             }
             .onChange(of: games.count) { // in case of deleting game that is selected , reset selection :

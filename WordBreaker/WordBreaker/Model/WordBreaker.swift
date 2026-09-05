@@ -103,7 +103,6 @@ enum ChoiceBestSoFar: Int, Codable {
         startTime = nil
     }
     
-    
     var isOver: Bool {
         attempts.last?.pegs == masterCharSeq.pegs
     }
