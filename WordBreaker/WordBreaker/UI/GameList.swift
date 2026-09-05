@@ -73,7 +73,6 @@ struct GameList: View {
             ForEach(shownGames) {game in
                 NavigationLink(value:game) { //using value:game to only specify here what to show (ie label) with destination view specified below instead, & allow for List to update selection
                     GameSummary(game:game)
-                    //                    .tag(game as WordBreaker?) // redundant but using due to buggy Canvas (see docs)
                 }
             }
             .onDelete {offsets in
@@ -148,7 +147,6 @@ struct GameList: View {
     
     var wordLength: Int {
         let wordLength:Int = Int.random(in:GameList.minWordLength...GameList.maxWordLength)
-//        let wordLength:Int = 5
         return wordLength
     }
 }

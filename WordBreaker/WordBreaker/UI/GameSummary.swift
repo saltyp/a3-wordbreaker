@@ -4,10 +4,6 @@
 //
 //  Created by danielringskog on 7/19/26.
 //
-/* TODO: (#4) The List of games should show:
--  the last word attempted in each game
- - along with its proper peg-matching indication
- */
 
 import SwiftUI
 

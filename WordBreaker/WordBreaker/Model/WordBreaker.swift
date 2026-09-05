@@ -111,7 +111,6 @@ enum ChoiceBestSoFar: Int, Codable {
     
     func attemptGuess() {
         // Ignore attempts by the user that they’ve already tried before
-        //TODO: not working
         if attempts.firstIndex(where: { $0 == guess }) != nil { return }
         // ignore attempts for which have no pegs chosen at all:
         if guess.pegs.allSatisfy({$0 == CharSeq.missing}) { return }
@@ -137,17 +136,6 @@ enum ChoiceBestSoFar: Int, Codable {
     func setGuessPeg(_ peg:Peg, at index: Int) {
         guard guess.pegs.indices.contains(index) else { return }
         guess.pegs[index] = peg
-    }
-    
-    /// Changes the pointed-at peg by cycling sequentially through the array pegChoices's elements
-    func changeGuessPeg(at index: Int) {
-        let existingPeg = guess.pegs[index]
-        if let indexOfExistingPegInPegChoices = pegChoices.firstIndex(of: existingPeg) {
-            let newPeg = pegChoices[(indexOfExistingPegInPegChoices + 1) % pegChoices.count] // modulo as need to wrap around if at last index
-            guess.pegs[index] = newPeg
-        } else {
-            guess.pegs[index] = pegChoices.first ?? CharSeq.missing
-        }
     }
 }
 

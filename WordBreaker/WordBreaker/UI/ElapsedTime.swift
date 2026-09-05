@@ -33,9 +33,4 @@ struct ElapsedTime: View {
                 
     }
 }
-    
 
-
-//#Preview {
-//    ElapsedTime()
-//}
