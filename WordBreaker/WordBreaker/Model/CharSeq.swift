@@ -11,11 +11,19 @@ import SwiftData
 @Model class CharSeq : Equatable {
     //MARK: Data In
     var _kind : String = Kind.unknown.description
-    var pegs : [Peg]
-    var seqLength: Int
+    var word: String
     var timestamp = Date.now  // to maintain order of games
     
-    static let missing : Peg = ""
+    static let missing : Peg = " "
+    
+    var pegs : [Peg] {
+        get { word.map { String($0)}}
+        set { word = newValue.joined()}
+    }
+    
+    var seqLength: Int {
+        word.count
+    }
     
     var kind: Kind {
         get { return Kind(_kind) }
@@ -24,30 +32,16 @@ import SwiftData
     
     /// empty initializer
     init(kind: Kind, wordLength: Int = 4) {
-        self.seqLength = wordLength
-        self.pegs = Array(repeating: CharSeq.missing, count: wordLength)
+        self.word = String(repeating: CharSeq.missing, count: wordLength)
         self.kind = kind
     }
     
     /// non-empty initializer
     init(kind: Kind, pegs: [Peg]) {
-        self.pegs = pegs
-        self.seqLength = pegs.count
+        self.word = pegs.joined()
         self.kind = kind
     }
-        
-    /// get/set the pegs in a Code to a String
-    var word: String {
-        get { pegs.joined() }
-        set { pegs = newValue.map { String($0) } }
-    }
-        
-//    mutating func randomize(from pegChoices: [Peg]) {
-//        for ix in pegs.indices {
-//            pegs[ix] = pegChoices.randomElement() ?? Code.missingPeg
-//        }
-//    }
-    
+            
     var isHidden: Bool {
         switch kind {
             case .mastercode(let isHidden): return isHidden

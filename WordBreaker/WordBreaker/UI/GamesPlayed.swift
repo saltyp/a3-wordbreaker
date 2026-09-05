@@ -11,12 +11,14 @@ struct GamesPlayed: View {
         
     // MARK: Data Owned by Me
     @State private var selection: WordBreaker? = nil
+    @State private var search: String = ""
     
     // MARK: - body
     var body: some View {
         NavigationSplitView(columnVisibility: .constant(.all)) {
-            GameList(selection:$selection)
+            GameList(nameContains: search, selection:$selection)
             .navigationTitle("Word Breaker")
+            .searchable(text: $search)
         } detail: {
             if let selection {
                 WordBreakerView(game:selection)

@@ -20,11 +20,24 @@ struct GameList: View {
 
     // MARK: Data shared with me
     @Binding var selection: WordBreaker?
-    @Query(sort: \WordBreaker.created, order: .reverse) private var games: [WordBreaker]
+    @Query private var games: [WordBreaker]
     
     // MARK: Data Owned by Me
-//    @State private var games: [WordBreaker] = []
     @State private var showSettingsEditor: Bool = false
+    
+    init(nameContains search : String = "", selection: Binding<WordBreaker?>) {
+        _selection = selection
+        let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
+        // break up query into 2 separate Query initializations to avoid SwiftData compiling predicate as relationship query:
+        if trimmedSearch.isEmpty {
+            _games = Query(sort: \WordBreaker.created, order: .reverse)
+        } else {
+            let uppercaseSearch = trimmedSearch.uppercased()  //all pegs are capital letters
+            let predicate = #Predicate<WordBreaker> {game in
+                game._attempts.contains {attempt in attempt.word.contains(uppercaseSearch)} }
+            _games = Query(filter:predicate, sort: \WordBreaker.created, order: .reverse)
+        }
+    }
     
     var body: some View {
         
