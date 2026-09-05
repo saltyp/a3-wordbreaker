@@ -19,6 +19,8 @@ struct GamesPlayed: View {
             GameList(nameContains: search, selection:$selection)
             .navigationTitle("Word Breaker")
             .searchable(text: $search)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
         } detail: {
             if let selection {
                 WordBreakerView(game:selection)

@@ -34,7 +34,9 @@ struct GameList: View {
         } else {
             let uppercaseSearch = trimmedSearch.uppercased()  //all pegs are capital letters
             let predicate = #Predicate<WordBreaker> {game in
-                game._attempts.contains {attempt in attempt.word.contains(uppercaseSearch)} }
+                game._attempts.contains {attempt in attempt.word.contains(uppercaseSearch)}
+                || game.masterCharSeq.word.contains(uppercaseSearch)
+            }
             _games = Query(filter:predicate, sort: \WordBreaker.created, order: .reverse)
         }
     }
