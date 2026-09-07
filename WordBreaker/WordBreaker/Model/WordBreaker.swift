@@ -51,7 +51,9 @@ enum ChoiceBestSoFar: Int, Codable {
     @Relationship(deleteRule: .cascade) var _attempts : [CharSeq] = [CharSeq]()  // all attempts made
     static let alphabetKeyboard = "QWERTYUIOPASDFGHJKLZXCVBNM"
     static let pegChoices = WordBreaker.alphabetKeyboard.map { String($0)}
-    var pegChoices : [Peg] //= "QWERTYUIOPASDFGHJKLZXCVBNM".map { String($0) }// choices available to make a guess
+    var pegChoices : [Peg] {
+        Self.pegChoices
+    }
     var pegChoiceRecord : [Peg:ChoiceBestSoFar]
     
     @Transient var startTime: Date?
@@ -66,7 +68,6 @@ enum ChoiceBestSoFar: Int, Codable {
     }
     
     init(masterWord: String) {
-        self.pegChoices = WordBreaker.pegChoices
         self.masterWord = masterWord
         self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: WordBreaker.isMasterHidden), pegs: masterWord.map {String($0)})
         self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
@@ -76,7 +77,6 @@ enum ChoiceBestSoFar: Int, Codable {
     
     // initializer for creating a mid-stream game with set attempts
     init(masterWord:String, attemptedWords:[String]) {
-        self.pegChoices = WordBreaker.pegChoices
         self.masterWord = masterWord
         self.masterCharSeq = CharSeq(kind: .mastercode(isHidden: WordBreaker.isMasterHidden), pegs: masterWord.map {String($0)})
         self.guess = CharSeq(kind: .guess, wordLength: masterWord.count)
