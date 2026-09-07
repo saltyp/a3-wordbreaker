@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct CharSeqView: View {
     
@@ -51,11 +52,11 @@ struct CharSeqView: View {
     }
     
     func matchOverlayColor(for match:Match) -> Color {
-        return gameSettings.helperPegColors[match] ?? .gray
+        return Color(hex:gameSettings.helperPegColors[match] ?? "") ?? .gray  //TODO: check
     }
     
 }
 
 #Preview(traits: .swiftData) {
-    CharSeqView(charSeq: CharSeq(kind: .mastercode(isHidden: true), pegs:["a","p","p","l","e"]), selection: .constant(1))
+    CharSeqView(charSeq: CharSeq(kind: .mastercode(isHidden: true), pegs:["a","p","p","l","e"]), selection: Binding<Int>.constant(1))
 }

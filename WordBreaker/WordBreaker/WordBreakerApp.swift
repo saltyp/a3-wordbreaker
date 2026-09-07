@@ -12,7 +12,7 @@ struct WordBreakerApp: App {
     var body: some Scene {
         WindowGroup {
             GamesPlayed()
-                .modelContainer(for: WordBreaker.self)
+                .modelContainer(for: [WordBreaker.self, GameSettings.self])
         }
     }
 }

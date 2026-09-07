@@ -6,9 +6,18 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct GamesPlayed: View {
         
+    //MARK: Data In
+    @Environment(\.modelContext) private var modelContext
+    @Query private var _gameSettings: [GameSettings]
+
+    private var gameSettings:GameSettings {
+        _gameSettings.first ?? GameSettings()
+    }
+
     // MARK: Data Owned by Me
     @State private var selection: WordBreaker? = nil
     @State private var search: String = ""
@@ -35,9 +44,14 @@ struct GamesPlayed: View {
                 Text("Choose a Game!")
             }
         }
+        .environment(\.gameSettings, gameSettings)
         .navigationSplitViewStyle(.balanced)
+        .task {
+            if _gameSettings.isEmpty {
+                modelContext.insert(GameSettings())
+            }
+        }
     }
-            
 }
 
 #Preview(traits: .swiftData) {

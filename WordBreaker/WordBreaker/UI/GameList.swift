@@ -14,6 +14,7 @@ struct GameList: View {
     // MARK: Data in
     @Environment(\.words) var words
     @Environment(\.gameSettings) var gameSettings
+
     @Environment(\.modelContext) var modelContext
     private static let minWordLength = 3
     private static let maxWordLength = 6

@@ -10,7 +10,7 @@ import SwiftData
 
 typealias Peg = String // no need for enum Peg with just one var
 
-enum Match: Int, CaseIterable {
+enum Match: Int, CaseIterable, Codable {  //Codable for GameSettings persistence
     case noMatch = 0
     case inexact
     case exact

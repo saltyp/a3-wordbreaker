@@ -6,21 +6,22 @@
 //
 
 import SwiftUI
+import SwiftData
 
 extension EnvironmentValues {
-    @Entry var gameSettings = GameSettings.shared
+    @Entry var gameSettings = GameSettings()
 }
 
-@Observable
+
+@Model
 class GameSettings {
-    var helperPegColors: [Match: Color] = [.exact:.green, .inexact:.blue, .noMatch:.gray]
-    var defaultWordLength: Int = 4
+    var helperPegColors: [Match: String]
+    var defaultWordLength: Int
     
-    // singleton instance to share:
-    static let shared = GameSettings()
-    
-    // singleton pattern
-    private init() {
+    init(helperPegColors: [Match: String] = [.exact:Color.green.hex, .inexact:Color.blue.hex, .noMatch:Color.gray.hex],
+         defaultWordLength: Int = 4) {
+        self.helperPegColors = helperPegColors
+        self.defaultWordLength = defaultWordLength
     }
-    
+
 }

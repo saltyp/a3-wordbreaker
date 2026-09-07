@@ -6,14 +6,15 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SettingsEditor: View {
     
     //MARK: Data Shared with Me
     @Environment(\.dismiss) var dismiss  //to dismiss screen
     @Environment(\.words) var words
-    @Environment(\.gameSettings) var gameSettings  // gives read.write access to object, but does not bind yet
-    
+    @Environment(\.gameSettings) var gameSettings
+
     //MARK: Data Owned by Me
     @State private var draft = GameSettingsDraft()
     
@@ -82,16 +83,16 @@ struct GameSettingsDraft {
     }
     
     init(from settings: GameSettings) {
-        self.helperColors = settings.helperPegColors
+        self.helperColors = settings.helperPegColors.mapValues {Color(hex:$0) ?? .black}  
         self.defaultWordLength = settings.defaultWordLength
     }
     
     func apply(to settings:GameSettings) {
-        settings.helperPegColors = helperColors
+        settings.helperPegColors = helperColors.mapValues {$0.hex}
         settings.defaultWordLength = defaultWordLength
     }
 }
 
-#Preview {
+#Preview(traits: .swiftData) {
     SettingsEditor()
 }
