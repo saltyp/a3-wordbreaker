@@ -17,7 +17,7 @@ struct WordBreakerView: View {
     
     // MARK: Data Owned By Me
     @State private var selection : Int = 0
-    @State private var checker = UITextChecker()
+    @State var checker = UITextChecker()
 
     // MARK: - body
     
