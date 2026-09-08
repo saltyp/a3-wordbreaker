@@ -7,34 +7,40 @@
 
 import SwiftUI
 
-extension EnvironmentValues {
+// since var words and shared are open to all actors, it is not threadsafe (especially as non-singleton is used here)
+extension EnvironmentValues { //EnvironmentValues @Entry do not allow actor isolation 
     @Entry var words = Words.shared
 }
 
+@MainActor //make entire Words be isolated to the MainActor
 @Observable
 class Words {
     private var words = Dictionary<Int, Set<String>>()
     
-    static let shared =
+    static let shared = //now only can be read/written by code on the MainActor (eg UI)
         Words(from: URL(string: "https://web.stanford.edu/class/cs193p/common.words"))
 
     private init(from url: URL? = nil) {
         Task {
-            var _words = [Int:Set<String>]()
-            if let url {
-                do {
-                    for try await word in url.lines {
-                        _words[word.count, default: Set<String>()].insert(word.uppercased())
-                    }
-                } catch {
-                    print("Words could not load words from \(url): \(error)")
-                }
-            }
-            words = _words
+            words = await load(from: url)
             if count > 0 {
                 print("Words loaded \(count) words from \(url?.absoluteString ?? "nil")")
             }
         }
+    }
+    
+    private func load(from url: URL?) async -> Dictionary<Int, Set<String>> {
+        var _words = [Int:Set<String>]()
+        if let url {
+            do {
+                for try await word in url.lines {
+                    _words[word.count, default: Set<String>()].insert(word.uppercased())
+                }
+            } catch {
+                print("Words could not load words from \(url): \(error)")
+            }
+        }
+        return _words
     }
     
     var count: Int {

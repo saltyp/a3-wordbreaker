@@ -15,7 +15,7 @@ extension Animation {
 }
 
 extension AnyTransition {
-    static let keyboard = AnyTransition.offset(x: 0, y:200)
+    @MainActor static let keyboard = AnyTransition.offset(x: 0, y:200)
     static func attempt(_ isOver: Bool)-> AnyTransition {
         return AnyTransition.asymmetric(
             insertion: isOver ? .opacity : .move(edge:.top),
